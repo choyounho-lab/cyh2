@@ -26,25 +26,31 @@
       >
         <input type="hidden" name="_subject" value="새 제휴 문의가 도착했습니다" />
         <input type="hidden" name="_language" value="ko" />
+        <input type="hidden" name="_replyto" value="" />
+
+        <label class="honeypot" aria-hidden="true" tabindex="-1">
+          <span>웹사이트</span>
+          <input type="text" name="_gotcha" autocomplete="off" tabindex="-1" />
+        </label>
 
         <label>
           <span>회사명 또는 브랜드명</span>
-          <input type="text" name="company" placeholder="예: CYH Studio" required />
+          <input type="text" name="company" placeholder="예: CYH Studio" autocomplete="organization" required />
         </label>
 
         <label>
           <span>담당자 이름</span>
-          <input type="text" name="name" placeholder="이름을 입력해주세요" required />
+          <input type="text" name="name" placeholder="이름을 입력해주세요" autocomplete="name" required />
         </label>
 
         <label>
           <span>이메일</span>
-          <input type="email" name="email" placeholder="name@company.com" required />
+          <input type="email" name="email" placeholder="name@company.com" autocomplete="email" required />
         </label>
 
         <label>
           <span>연락처</span>
-          <input type="tel" name="phone" placeholder="선택 입력" />
+          <input type="tel" name="phone" placeholder="선택 입력" autocomplete="tel" />
         </label>
 
         <label>
