@@ -1,4 +1,4 @@
-const form = document.querySelector("#partnership-form");
+const form = document.querySelector("#booking-form");
 const statusMessage = document.querySelector("#form-status");
 
 if (form && statusMessage) {
@@ -6,9 +6,14 @@ if (form && statusMessage) {
     event.preventDefault();
 
     const submitButton = form.querySelector('button[type="submit"]');
+    const defaultButtonLabel = submitButton?.dataset.label || submitButton?.textContent || "예약 요청 보내기";
     const formData = new FormData(form);
     const email = form.querySelector('input[name="email"]');
     const replyTo = form.querySelector('input[name="_replyto"]');
+
+    if (submitButton) {
+      submitButton.dataset.label = defaultButtonLabel;
+    }
 
     if (replyTo && email instanceof HTMLInputElement) {
       replyTo.value = email.value.trim();
@@ -21,7 +26,7 @@ if (form && statusMessage) {
 
     if (submitButton) {
       submitButton.disabled = true;
-      submitButton.textContent = "전송 중...";
+      submitButton.textContent = "예약 요청 전송 중...";
     }
 
     try {
@@ -51,7 +56,7 @@ if (form && statusMessage) {
       }
 
       form.reset();
-      statusMessage.textContent = "문의가 접수되었습니다. 빠르게 검토 후 회신드리겠습니다.";
+      statusMessage.textContent = "예약 요청이 접수되었습니다. 입력하신 이메일로 운항 가능 여부와 안내를 회신드리겠습니다.";
       statusMessage.classList.add("is-success");
     } catch (error) {
       statusMessage.textContent =
@@ -62,7 +67,7 @@ if (form && statusMessage) {
 
       if (submitButton) {
         submitButton.disabled = false;
-        submitButton.textContent = "문의 보내기";
+        submitButton.textContent = defaultButtonLabel;
       }
     }
   });
