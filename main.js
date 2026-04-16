@@ -118,8 +118,29 @@ const portalResultsList = document.querySelector("#portal-results-list");
 const portalResultMeta = document.querySelector("#portal-result-meta");
 const portalButtons = document.querySelectorAll("[data-portal-keyword]");
 const textWraps = document.querySelectorAll(".text-wrap");
+const portalContactTrigger = document.querySelector("#portal-contact-trigger");
+const portalContactModal = document.querySelector("#portal-contact-modal");
+const portalContactClose = document.querySelector("#portal-contact-close");
 const portalContactForm = document.querySelector("#portal-contact-form");
 const portalContactStatus = document.querySelector("#portal-contact-status");
+
+function openPortalContactModal() {
+  if (!(portalContactModal instanceof HTMLElement)) {
+    return;
+  }
+
+  portalContactModal.hidden = false;
+  document.body.classList.add("portal-modal-open");
+}
+
+function closePortalContactModal() {
+  if (!(portalContactModal instanceof HTMLElement)) {
+    return;
+  }
+
+  portalContactModal.hidden = true;
+  document.body.classList.remove("portal-modal-open");
+}
 
 function renderPortalResults(items, query = "") {
   if (!portalResultsList || !portalResultMeta) {
@@ -265,5 +286,28 @@ if (portalContactForm && portalContactStatus) {
     }
   });
 }
+
+if (portalContactTrigger instanceof HTMLElement) {
+  portalContactTrigger.addEventListener("click", openPortalContactModal);
+}
+
+if (portalContactClose instanceof HTMLElement) {
+  portalContactClose.addEventListener("click", closePortalContactModal);
+}
+
+if (portalContactModal instanceof HTMLElement) {
+  portalContactModal.addEventListener("click", (event) => {
+    const target = event.target;
+    if (target instanceof HTMLElement && target.hasAttribute("data-contact-close")) {
+      closePortalContactModal();
+    }
+  });
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closePortalContactModal();
+  }
+});
 
 renderPortalResults(portalSearchData.slice(0, 4));

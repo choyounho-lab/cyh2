@@ -108,14 +108,58 @@ body::before {
   text-decoration: none;
 }
 
+.portal-contact-trigger {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid #cfcfcf;
+  border-radius: 999px;
+  background: #f1f1f1;
+  color: #111;
+  font-weight: 700;
+}
+
+.portal-contact-trigger:hover {
+  background: #e7e7e7;
+}
+
+.portal-contact-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+
+.portal-contact-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.32);
+}
+
+.portal-contact-dialog {
+  position: relative;
+  width: min(460px, calc(100% - 24px));
+  margin: 72px auto 0;
+  padding: 18px;
+  border: 1px solid #d7d7d7;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+}
+
+.portal-contact-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
 .portal-contact-form {
-  width: 260px;
   display: grid;
   gap: 8px;
-  padding: 14px;
-  border: 1px solid #dddddd;
-  border-radius: 18px;
-  background: #fafafa;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .portal-contact-head {
@@ -133,6 +177,15 @@ body::before {
 .portal-contact-head span {
   font-size: 0.76rem;
   color: #767676;
+}
+
+.portal-contact-close {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid #d4d4d4;
+  border-radius: 999px;
+  background: #f5f5f5;
+  color: #222;
 }
 
 .portal-contact-form input,
@@ -182,6 +235,10 @@ body::before {
 
 .portal-contact-status.is-error {
   color: #b53b3b;
+}
+
+.portal-modal-open {
+  overflow: hidden;
 }
 
 .portal-main {
@@ -404,15 +461,12 @@ body::before {
 
   .portal-top-actions {
     width: 100%;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .portal-nav {
     padding-top: 0;
-  }
-
-  .portal-contact-form {
-    width: 100%;
   }
 
   .portal-hero {
@@ -430,6 +484,10 @@ body::before {
 
   .portal-search-box button {
     width: 100%;
+  }
+
+  .portal-contact-dialog {
+    margin-top: 28px;
   }
 }
 
