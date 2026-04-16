@@ -118,6 +118,8 @@ const portalResultsList = document.querySelector("#portal-results-list");
 const portalResultMeta = document.querySelector("#portal-result-meta");
 const portalButtons = document.querySelectorAll("[data-portal-keyword]");
 const textWraps = document.querySelectorAll(".text-wrap");
+const portalContactForm = document.querySelector("#portal-contact-form");
+const portalContactStatus = document.querySelector("#portal-contact-status");
 
 function renderPortalResults(items, query = "") {
   if (!portalResultsList || !portalResultMeta) {
@@ -205,5 +207,63 @@ textWraps.forEach((container, lineIndex) => {
     container.appendChild(span);
   });
 });
+
+if (portalContactForm && portalContactStatus) {
+  portalContactForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const submitButton = portalContactForm.querySelector('button[type="submit"]');
+    const defaultLabel = submitButton?.textContent || "문의 보내기";
+    const formData = new FormData(portalContactForm);
+
+    portalContactStatus.textContent = "";
+    portalContactStatus.className = "portal-contact-status";
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "전송 중...";
+    }
+
+    try {
+      const response = await fetch(portalContactForm.action, {
+        method: "POST",
+        body: formData,
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        let errorMessage = "전송에 실패했습니다. 잠시 후 다시 시도해주세요.";
+
+        try {
+          const data = await response.json();
+          const firstError = Array.isArray(data.errors) ? data.errors[0] : null;
+
+          if (firstError?.message) {
+            errorMessage = firstError.message;
+          }
+        } catch {
+          // Ignore JSON parse failures and use the default message.
+        }
+
+        throw new Error(errorMessage);
+      }
+
+      portalContactForm.reset();
+      portalContactStatus.textContent = "제휴 문의가 접수되었습니다.";
+      portalContactStatus.classList.add("is-success");
+    } catch (error) {
+      portalContactStatus.textContent =
+        error instanceof Error ? error.message : "전송에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      portalContactStatus.classList.add("is-error");
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = defaultLabel;
+      }
+    }
+  });
+}
 
 renderPortalResults(portalSearchData.slice(0, 4));

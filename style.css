@@ -65,6 +65,12 @@ body::before {
   padding: 16px 20px;
 }
 
+.portal-top-actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
 .portal-brand {
   display: inline-flex;
   align-items: baseline;
@@ -94,11 +100,88 @@ body::before {
   display: flex;
   flex-wrap: wrap;
   gap: 18px;
+  padding-top: 10px;
 }
 
 .portal-nav a {
   color: #444;
   text-decoration: none;
+}
+
+.portal-contact-form {
+  width: 260px;
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid #dddddd;
+  border-radius: 18px;
+  background: #fafafa;
+}
+
+.portal-contact-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.portal-contact-head strong {
+  font-size: 0.95rem;
+  color: #111;
+}
+
+.portal-contact-head span {
+  font-size: 0.76rem;
+  color: #767676;
+}
+
+.portal-contact-form input,
+.portal-contact-form textarea {
+  width: 100%;
+  border: 1px solid #d4d4d4;
+  border-radius: 12px;
+  background: #fff;
+  color: #111;
+  padding: 10px 12px;
+  outline: 0;
+}
+
+.portal-contact-form textarea {
+  resize: vertical;
+  min-height: 76px;
+}
+
+.portal-contact-form button {
+  min-height: 42px;
+  border: 1px solid #cfcfcf;
+  border-radius: 12px;
+  background: #ededed;
+  color: #111;
+  font-weight: 700;
+}
+
+.portal-contact-form button:hover {
+  background: #e3e3e3;
+}
+
+.portal-contact-form button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.portal-contact-status {
+  min-height: 18px;
+  margin: 0;
+  font-size: 0.82rem;
+  color: #666;
+}
+
+.portal-contact-status.is-success {
+  color: #0d7a50;
+}
+
+.portal-contact-status.is-error {
+  color: #b53b3b;
 }
 
 .portal-main {
@@ -317,6 +400,19 @@ body::before {
   .portal-topbar {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .portal-top-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .portal-nav {
+    padding-top: 0;
+  }
+
+  .portal-contact-form {
+    width: 100%;
   }
 
   .portal-hero {

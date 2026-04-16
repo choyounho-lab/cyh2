@@ -17,11 +17,40 @@
         <strong>CYH</strong>
         <span>Search Portal</span>
       </a>
-      <nav class="portal-nav">
-        <a href="#portal-services">서비스</a>
-        <a href="#portal-results">검색결과</a>
-        <a href="#portal-workspace">작업영역</a>
-      </nav>
+      <div class="portal-top-actions">
+        <nav class="portal-nav">
+          <a href="#portal-services">서비스</a>
+          <a href="#portal-results">검색결과</a>
+          <a href="#portal-workspace">작업영역</a>
+        </nav>
+
+        <form
+          class="portal-contact-form"
+          id="portal-contact-form"
+          action="https://formspree.io/f/mwvalkoq"
+          method="POST"
+        >
+          <input type="hidden" name="_subject" value="새 제휴 문의가 도착했습니다" />
+          <div class="portal-contact-head">
+            <strong>제휴 문의</strong>
+            <span>Partnership</span>
+          </div>
+          <label>
+            <span class="portal-sr-only">이름</span>
+            <input type="text" name="name" placeholder="이름" autocomplete="name" required />
+          </label>
+          <label>
+            <span class="portal-sr-only">이메일</span>
+            <input type="email" name="email" placeholder="이메일" autocomplete="email" required />
+          </label>
+          <label>
+            <span class="portal-sr-only">문의 내용</span>
+            <textarea name="message" rows="2" placeholder="제휴 문의 내용을 남겨주세요." required></textarea>
+          </label>
+          <button type="submit">문의 보내기</button>
+          <p class="portal-contact-status" id="portal-contact-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
     </header>
 
     <main class="portal-main">
