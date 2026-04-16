@@ -72,3 +72,120 @@ if (form && statusMessage) {
     }
   });
 }
+
+const portalSearchData = [
+  {
+    title: "실시간 뉴스 브리핑",
+    description: "주요 헤드라인과 속보를 빠르게 확인하는 뉴스 허브입니다.",
+    category: "뉴스",
+    keywords: ["뉴스", "실시간 뉴스", "브리핑", "헤드라인"],
+  },
+  {
+    title: "오늘 일정 정리",
+    description: "캘린더 일정을 한 번에 모아보고 우선순위를 정리합니다.",
+    category: "일정",
+    keywords: ["일정", "캘린더", "오늘 일정", "미팅"],
+  },
+  {
+    title: "메일 확인 센터",
+    description: "받은편지함, 중요 메일, 회신 대기 메일을 확인하는 영역입니다.",
+    category: "메일",
+    keywords: ["메일", "이메일", "받은편지함", "회신"],
+  },
+  {
+    title: "쇼핑 추천 모음",
+    description: "자주 찾는 상품과 추천 카테고리를 빠르게 둘러봅니다.",
+    category: "쇼핑",
+    keywords: ["쇼핑", "상품", "추천", "구매"],
+  },
+  {
+    title: "지도 검색 서비스",
+    description: "장소, 주소, 이동 경로를 조회할 수 있는 지도 기능 자리입니다.",
+    category: "지도",
+    keywords: ["지도", "위치", "주소", "길찾기"],
+  },
+  {
+    title: "빠른 메모 작성",
+    description: "즉시 메모를 남기고 후속 작업으로 연결하는 영역입니다.",
+    category: "메모",
+    keywords: ["메모", "기록", "노트", "아이디어"],
+  },
+];
+
+const portalForm = document.querySelector("#portal-search-form");
+const portalInput = document.querySelector("#portal-search-input");
+const portalResultsList = document.querySelector("#portal-results-list");
+const portalResultMeta = document.querySelector("#portal-result-meta");
+const portalButtons = document.querySelectorAll("[data-portal-keyword]");
+
+function renderPortalResults(items, query = "") {
+  if (!portalResultsList || !portalResultMeta) {
+    return;
+  }
+
+  if (items.length === 0) {
+    portalResultMeta.textContent = query ? `"${query}" 검색 결과 없음` : "검색 결과 없음";
+    portalResultsList.innerHTML = `
+      <article class="portal-result-card portal-result-empty">
+        <strong>일치하는 결과가 없습니다.</strong>
+        <p>다른 키워드로 다시 검색하거나 추천 검색어를 눌러보세요.</p>
+      </article>
+    `;
+    return;
+  }
+
+  portalResultMeta.textContent = query ? `"${query}" 검색 결과 ${items.length}건` : "기본 추천 결과";
+  portalResultsList.innerHTML = items
+    .map(
+      (item) => `
+        <article class="portal-result-card">
+          <div class="portal-result-top">
+            <span class="portal-result-category">${item.category}</span>
+          </div>
+          <strong>${item.title}</strong>
+          <p>${item.description}</p>
+        </article>
+      `,
+    )
+    .join("");
+}
+
+function runPortalSearch(query) {
+  const normalized = query.trim().toLowerCase();
+
+  if (!normalized) {
+    renderPortalResults(portalSearchData.slice(0, 4));
+    return;
+  }
+
+  const filtered = portalSearchData.filter((item) => {
+    return [item.title, item.description, item.category, ...item.keywords]
+      .join(" ")
+      .toLowerCase()
+      .includes(normalized);
+  });
+
+  renderPortalResults(filtered, query.trim());
+}
+
+if (portalForm && portalInput instanceof HTMLInputElement) {
+  portalForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    runPortalSearch(portalInput.value);
+  });
+}
+
+portalButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (!(button instanceof HTMLElement) || !(portalInput instanceof HTMLInputElement)) {
+      return;
+    }
+
+    const keyword = button.dataset.portalKeyword ?? "";
+    portalInput.value = keyword;
+    runPortalSearch(keyword);
+    portalInput.focus();
+  });
+});
+
+renderPortalResults(portalSearchData.slice(0, 4));
