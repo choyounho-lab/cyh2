@@ -117,6 +117,7 @@ const portalInput = document.querySelector("#portal-search-input");
 const portalResultsList = document.querySelector("#portal-results-list");
 const portalResultMeta = document.querySelector("#portal-result-meta");
 const portalButtons = document.querySelectorAll("[data-portal-keyword]");
+const textWraps = document.querySelectorAll(".text-wrap");
 
 function renderPortalResults(items, query = "") {
   if (!portalResultsList || !portalResultMeta) {
@@ -185,6 +186,23 @@ portalButtons.forEach((button) => {
     portalInput.value = keyword;
     runPortalSearch(keyword);
     portalInput.focus();
+  });
+});
+
+textWraps.forEach((container, lineIndex) => {
+  if (!(container instanceof HTMLElement)) {
+    return;
+  }
+
+  const text = container.dataset.text ?? "";
+  container.textContent = "";
+
+  [...text].forEach((char, i) => {
+    const span = document.createElement("span");
+    span.className = "char";
+    span.textContent = char;
+    span.style.animationDelay = `${lineIndex * 700 + i * 150}ms`;
+    container.appendChild(span);
   });
 });
 

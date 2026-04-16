@@ -133,11 +133,30 @@ body::before {
   letter-spacing: -0.06em;
 }
 
+.portal-hero-title .text-wrap {
+  display: block;
+  min-height: 1em;
+}
+
 .portal-copy {
   max-width: 700px;
   margin: 18px 0 0;
   color: #5b5b5b;
   line-height: 1.7;
+}
+
+.char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: riseUp 0.5s ease forwards;
+}
+
+@keyframes riseUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .portal-search-form {
