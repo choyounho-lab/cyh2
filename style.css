@@ -289,7 +289,7 @@ body::before {
   display: inline-block;
   opacity: 0;
   transform: translateY(30px);
-  animation: riseUp 0.5s ease infinite alternate;
+  animation: riseUp 2s ease infinite alternate;
 }
 
 @keyframes riseUp {
