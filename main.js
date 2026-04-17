@@ -123,6 +123,14 @@ const portalContactModal = document.querySelector("#portal-contact-modal");
 const portalContactClose = document.querySelector("#portal-contact-close");
 const portalContactForm = document.querySelector("#portal-contact-form");
 const portalContactStatus = document.querySelector("#portal-contact-status");
+const portalCommentTrigger = document.querySelector("#portal-comment-trigger");
+const portalCommentModal = document.querySelector("#portal-comment-modal");
+const portalCommentClose = document.querySelector("#portal-comment-close");
+const portalCommentForm = document.querySelector("#portal-comment-form");
+const portalCommentStatus = document.querySelector("#portal-comment-status");
+const portalCommentList = document.querySelector("#portal-comment-list");
+const portalCommentStorageKey = "cyh-portal-comments";
+let portalComments = loadPortalComments();
 
 function openPortalContactModal() {
   if (!(portalContactModal instanceof HTMLElement)) {
@@ -139,7 +147,109 @@ function closePortalContactModal() {
   }
 
   portalContactModal.hidden = true;
-  document.body.classList.remove("portal-modal-open");
+  syncPortalBodyScroll();
+}
+
+function openPortalCommentModal() {
+  if (!(portalCommentModal instanceof HTMLElement)) {
+    return;
+  }
+
+  portalCommentModal.hidden = false;
+  document.body.classList.add("portal-modal-open");
+}
+
+function closePortalCommentModal() {
+  if (!(portalCommentModal instanceof HTMLElement)) {
+    return;
+  }
+
+  portalCommentModal.hidden = true;
+  syncPortalBodyScroll();
+}
+
+function syncPortalBodyScroll() {
+  const hasOpenModal =
+    portalContactModal instanceof HTMLElement && !portalContactModal.hidden
+      ? true
+      : portalCommentModal instanceof HTMLElement && !portalCommentModal.hidden;
+
+  document.body.classList.toggle("portal-modal-open", hasOpenModal);
+}
+
+function loadPortalComments() {
+  try {
+    const savedComments = localStorage.getItem(portalCommentStorageKey);
+    const parsedComments = savedComments ? JSON.parse(savedComments) : [];
+
+    return Array.isArray(parsedComments) ? parsedComments : [];
+  } catch {
+    return [];
+  }
+}
+
+function savePortalComments() {
+  try {
+    localStorage.setItem(portalCommentStorageKey, JSON.stringify(portalComments));
+  } catch {
+    // Ignore storage failures and keep the UI usable.
+  }
+}
+
+function formatPortalCommentDate(value) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
+function escapePortalHtml(value) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function renderPortalComments() {
+  if (!(portalCommentList instanceof HTMLElement)) {
+    return;
+  }
+
+  if (portalComments.length === 0) {
+    portalCommentList.innerHTML = `
+      <article class="portal-comment-empty">
+        <strong>아직 등록된 댓글이 없습니다.</strong>
+        <p>첫 댓글을 팝업에서 작성해 보세요.</p>
+      </article>
+    `;
+    return;
+  }
+
+  portalCommentList.innerHTML = portalComments
+    .map((comment) => {
+      return `
+        <article class="portal-comment-item">
+          <div class="portal-comment-meta">
+            <strong>${escapePortalHtml(comment.title)}</strong>
+            <span>${formatPortalCommentDate(comment.createdAt)}</span>
+          </div>
+          <p class="portal-comment-author">${escapePortalHtml(comment.name)}</p>
+          <p class="portal-comment-body">${escapePortalHtml(comment.message)}</p>
+        </article>
+      `;
+    })
+    .join("");
 }
 
 function renderPortalResults(items, query = "") {
@@ -304,10 +414,69 @@ if (portalContactModal instanceof HTMLElement) {
   });
 }
 
+if (portalCommentTrigger instanceof HTMLElement) {
+  portalCommentTrigger.addEventListener("click", openPortalCommentModal);
+}
+
+if (portalCommentClose instanceof HTMLElement) {
+  portalCommentClose.addEventListener("click", closePortalCommentModal);
+}
+
+if (portalCommentModal instanceof HTMLElement) {
+  portalCommentModal.addEventListener("click", (event) => {
+    const target = event.target;
+    if (target instanceof HTMLElement && target.hasAttribute("data-comment-close")) {
+      closePortalCommentModal();
+    }
+  });
+}
+
+if (portalCommentForm instanceof HTMLFormElement && portalCommentStatus instanceof HTMLElement) {
+  portalCommentForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(portalCommentForm);
+    const name = String(formData.get("name") ?? "").trim();
+    const title = String(formData.get("title") ?? "").trim();
+    const message = String(formData.get("message") ?? "").trim();
+
+    portalCommentStatus.textContent = "";
+    portalCommentStatus.className = "portal-contact-status";
+
+    if (!name || !title || !message) {
+      portalCommentStatus.textContent = "이름, 제목, 내용을 모두 입력해 주세요.";
+      portalCommentStatus.classList.add("is-error");
+      return;
+    }
+
+    const comment = {
+      name,
+      title,
+      message,
+      createdAt: new Date().toISOString(),
+    };
+
+    portalComments = [comment, ...portalComments].slice(0, 12);
+    savePortalComments();
+    renderPortalComments();
+    portalCommentForm.reset();
+    portalCommentStatus.textContent = "댓글이 등록되었습니다.";
+    portalCommentStatus.classList.add("is-success");
+
+    window.setTimeout(() => {
+      closePortalCommentModal();
+      portalCommentStatus.textContent = "";
+      portalCommentStatus.className = "portal-contact-status";
+    }, 700);
+  });
+}
+
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     closePortalContactModal();
+    closePortalCommentModal();
   }
 });
 
 renderPortalResults(portalSearchData.slice(0, 4));
+renderPortalComments();

@@ -63,6 +63,36 @@
       </div>
     </div>
 
+    <div class="portal-comment-modal" id="portal-comment-modal" hidden>
+      <div class="portal-contact-backdrop" data-comment-close></div>
+      <div class="portal-contact-dialog portal-comment-dialog" role="dialog" aria-modal="true" aria-labelledby="portal-comment-title">
+        <div class="portal-contact-dialog-head">
+          <div class="portal-contact-head">
+            <strong id="portal-comment-title">댓글 작성</strong>
+            <span>Comment Form</span>
+          </div>
+          <button type="button" class="portal-contact-close" id="portal-comment-close" aria-label="댓글 작성 닫기">닫기</button>
+        </div>
+
+        <form class="portal-contact-form portal-comment-form" id="portal-comment-form">
+          <label>
+            <span class="portal-sr-only">작성자 이름</span>
+            <input type="text" name="name" placeholder="작성자 이름" autocomplete="name" maxlength="24" required />
+          </label>
+          <label>
+            <span class="portal-sr-only">댓글 제목</span>
+            <input type="text" name="title" placeholder="댓글 제목" maxlength="40" required />
+          </label>
+          <label>
+            <span class="portal-sr-only">댓글 내용</span>
+            <textarea name="message" rows="5" placeholder="댓글 내용을 입력해 주세요." maxlength="300" required></textarea>
+          </label>
+          <button type="submit">댓글 등록</button>
+          <p class="portal-contact-status" id="portal-comment-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+
     <main class="portal-main">
       <section class="portal-hero" aria-label="검색 영역">
         <p class="portal-label">Simple Search Start</p>
@@ -151,6 +181,17 @@
             </li>
           </ul>
         </article>
+      </section>
+
+      <section class="portal-panel" id="portal-comments" aria-label="댓글 영역">
+        <div class="portal-panel-head portal-comment-head">
+          <div>
+            <h2>댓글</h2>
+            <span>Visitors Note</span>
+          </div>
+          <button type="button" class="portal-comment-trigger" id="portal-comment-trigger">댓글 쓰기</button>
+        </div>
+        <div class="portal-comment-list" id="portal-comment-list"></div>
       </section>
 
       <section class="portal-panel" id="portal-results" aria-live="polite">
