@@ -126,6 +126,8 @@ const portalContactStatus = document.querySelector("#portal-contact-status");
 const portalCommentTrigger = document.querySelector("#portal-comment-trigger");
 const portalCommentList = document.querySelector("#portal-comment-list");
 const portalCommentRepository = "choyounho-lab/cyh2";
+const portalCommentApiUrl = `https://api.github.com/repos/${portalCommentRepository}/issues?state=all&per_page=30`;
+const portalCommentPath = window.location.pathname || "/";
 
 function openPortalContactModal() {
   if (!(portalContactModal instanceof HTMLElement)) {
@@ -151,23 +153,141 @@ function syncPortalBodyScroll() {
   document.body.classList.toggle("portal-modal-open", hasOpenModal);
 }
 
-function initPortalComments() {
+function escapePortalHtml(value) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function formatPortalCommentDate(value) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
+function getPortalCommentIssueUrl() {
+  const title = `[Comment] ${document.title}`;
+  const body = [
+    `Path: ${portalCommentPath}`,
+    "",
+    "댓글 내용을 작성해 주세요.",
+  ].join("\n");
+
+  return `https://github.com/${portalCommentRepository}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
+}
+
+function getPortalCommentBodyPreview(body) {
+  const cleaned = body
+    .replace(`Path: ${portalCommentPath}`, "")
+    .replace(/\r/g, "")
+    .trim();
+
+  return cleaned || "내용이 아직 없습니다.";
+}
+
+function renderPortalCommentState(type, title, message) {
   if (!(portalCommentList instanceof HTMLElement)) {
     return;
   }
 
-  portalCommentList.innerHTML = "";
+  portalCommentList.innerHTML = `
+    <article class="portal-comment-${type}">
+      <strong>${escapePortalHtml(title)}</strong>
+      <p>${escapePortalHtml(message)}</p>
+    </article>
+  `;
+}
 
-  const script = document.createElement("script");
-  script.src = "https://utteranc.es/client.js";
-  script.async = true;
-  script.crossOrigin = "anonymous";
-  script.setAttribute("repo", portalCommentRepository);
-  script.setAttribute("issue-term", "pathname");
-  script.setAttribute("label", "comment");
-  script.setAttribute("theme", "github-light");
+function renderPortalComments(issues) {
+  if (!(portalCommentList instanceof HTMLElement)) {
+    return;
+  }
 
-  portalCommentList.appendChild(script);
+  if (issues.length === 0) {
+    renderPortalCommentState(
+      "empty",
+      "아직 등록된 공유 댓글이 없습니다.",
+      "첫 댓글을 작성하면 다른 사람도 같은 내용을 바로 볼 수 있습니다.",
+    );
+    return;
+  }
+
+  portalCommentList.innerHTML = issues
+    .map((issue) => {
+      const author = issue.user?.login ?? "unknown";
+      const avatar = issue.user?.avatar_url ?? "";
+      const bodyPreview = getPortalCommentBodyPreview(issue.body ?? "");
+
+      return `
+        <article class="portal-comment-item">
+          <div class="portal-comment-top">
+            <span class="portal-comment-avatar">
+              <img src="${escapePortalHtml(avatar)}" alt="${escapePortalHtml(author)} 프로필 이미지" />
+            </span>
+            <div class="portal-comment-meta-copy">
+              <div class="portal-comment-meta">
+                <a class="portal-comment-link" href="${escapePortalHtml(issue.html_url)}" target="_blank" rel="noreferrer">
+                  <strong>${escapePortalHtml(issue.title.replace(/^\[Comment\]\s*/, ""))}</strong>
+                </a>
+                <span>${formatPortalCommentDate(issue.created_at)}</span>
+              </div>
+              <p class="portal-comment-author">${escapePortalHtml(author)}</p>
+            </div>
+          </div>
+          <p class="portal-comment-body">${escapePortalHtml(bodyPreview)}</p>
+        </article>
+      `;
+    })
+    .join("");
+}
+
+async function initPortalComments() {
+  renderPortalCommentState("loading", "댓글 불러오는 중", "공유 댓글 목록을 가져오고 있습니다.");
+
+  try {
+    const response = await fetch(portalCommentApiUrl, {
+      headers: {
+        Accept: "application/vnd.github+json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("공유 댓글을 불러오지 못했습니다.");
+    }
+
+    const issues = await response.json();
+    const filteredIssues = Array.isArray(issues)
+      ? issues.filter((issue) => {
+          if (issue.pull_request) {
+            return false;
+          }
+
+          const body = typeof issue.body === "string" ? issue.body : "";
+          return body.includes(`Path: ${portalCommentPath}`);
+        })
+      : [];
+
+    renderPortalComments(filteredIssues);
+  } catch (error) {
+    renderPortalCommentState(
+      "error",
+      "댓글을 불러오지 못했습니다.",
+      error instanceof Error ? error.message : "잠시 후 다시 시도해 주세요.",
+    );
+  }
 }
 
 function renderPortalResults(items, query = "") {
@@ -334,11 +454,7 @@ if (portalContactModal instanceof HTMLElement) {
 
 if (portalCommentTrigger instanceof HTMLElement) {
   portalCommentTrigger.addEventListener("click", () => {
-    const commentSection = document.querySelector("#portal-comments");
-
-    if (commentSection instanceof HTMLElement) {
-      commentSection.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    window.open(getPortalCommentIssueUrl(), "_blank", "noopener,noreferrer");
   });
 }
 
