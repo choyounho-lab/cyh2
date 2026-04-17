@@ -129,7 +129,11 @@ const portalCommentClose = document.querySelector("#portal-comment-close");
 const portalCommentForm = document.querySelector("#portal-comment-form");
 const portalCommentStatus = document.querySelector("#portal-comment-status");
 const portalCommentList = document.querySelector("#portal-comment-list");
+const portalCommentAvatarInput = document.querySelector("#portal-comment-avatar");
+const portalCommentPreview = document.querySelector("#portal-comment-preview");
+const portalCommentPreviewImage = document.querySelector("#portal-comment-preview-image");
 const portalCommentStorageKey = "cyh-portal-comments";
+const portalCommentAvatarMaxBytes = 1024 * 1024;
 let portalComments = loadPortalComments();
 
 function openPortalContactModal() {
@@ -221,6 +225,49 @@ function escapePortalHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
+function getPortalCommentInitial(name) {
+  const trimmedName = name.trim();
+  return escapePortalHtml(trimmedName ? trimmedName.charAt(0).toUpperCase() : "?");
+}
+
+function escapePortalAttribute(value) {
+  return escapePortalHtml(value);
+}
+
+function setPortalCommentPreview(src = "") {
+  if (
+    !(portalCommentPreview instanceof HTMLElement) ||
+    !(portalCommentPreviewImage instanceof HTMLImageElement)
+  ) {
+    return;
+  }
+
+  if (!src) {
+    portalCommentPreview.hidden = true;
+    portalCommentPreviewImage.src = "";
+    return;
+  }
+
+  portalCommentPreview.hidden = false;
+  portalCommentPreviewImage.src = src;
+}
+
+function readPortalImageFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.addEventListener("load", () => {
+      resolve(typeof reader.result === "string" ? reader.result : "");
+    });
+
+    reader.addEventListener("error", () => {
+      reject(new Error("이미지를 읽지 못했습니다. 다시 선택해 주세요."));
+    });
+
+    reader.readAsDataURL(file);
+  });
+}
+
 function renderPortalComments() {
   if (!(portalCommentList instanceof HTMLElement)) {
     return;
@@ -238,13 +285,22 @@ function renderPortalComments() {
 
   portalCommentList.innerHTML = portalComments
     .map((comment) => {
+      const avatarMarkup = comment.avatar
+        ? `<span class="portal-comment-avatar"><img src="${escapePortalAttribute(comment.avatar)}" alt="${escapePortalAttribute(comment.name)} 프로필 이미지" /></span>`
+        : `<span class="portal-comment-avatar" aria-hidden="true">${getPortalCommentInitial(comment.name)}</span>`;
+
       return `
         <article class="portal-comment-item">
-          <div class="portal-comment-meta">
-            <strong>${escapePortalHtml(comment.title)}</strong>
-            <span>${formatPortalCommentDate(comment.createdAt)}</span>
+          <div class="portal-comment-top">
+            ${avatarMarkup}
+            <div class="portal-comment-meta-copy">
+              <div class="portal-comment-meta">
+                <strong>${escapePortalHtml(comment.title)}</strong>
+                <span>${formatPortalCommentDate(comment.createdAt)}</span>
+              </div>
+              <p class="portal-comment-author">${escapePortalHtml(comment.name)}</p>
+            </div>
           </div>
-          <p class="portal-comment-author">${escapePortalHtml(comment.name)}</p>
           <p class="portal-comment-body">${escapePortalHtml(comment.message)}</p>
         </article>
       `;
@@ -431,14 +487,57 @@ if (portalCommentModal instanceof HTMLElement) {
   });
 }
 
+if (portalCommentAvatarInput instanceof HTMLInputElement && portalCommentStatus instanceof HTMLElement) {
+  portalCommentAvatarInput.addEventListener("change", async () => {
+    const file = portalCommentAvatarInput.files?.[0];
+
+    portalCommentStatus.textContent = "";
+    portalCommentStatus.className = "portal-contact-status";
+
+    if (!file) {
+      setPortalCommentPreview("");
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      portalCommentAvatarInput.value = "";
+      setPortalCommentPreview("");
+      portalCommentStatus.textContent = "이미지 파일만 선택할 수 있습니다.";
+      portalCommentStatus.classList.add("is-error");
+      return;
+    }
+
+    if (file.size > portalCommentAvatarMaxBytes) {
+      portalCommentAvatarInput.value = "";
+      setPortalCommentPreview("");
+      portalCommentStatus.textContent = "프로필 이미지는 1MB 이하로 선택해 주세요.";
+      portalCommentStatus.classList.add("is-error");
+      return;
+    }
+
+    try {
+      const imageSource = await readPortalImageFile(file);
+      setPortalCommentPreview(imageSource);
+    } catch (error) {
+      portalCommentAvatarInput.value = "";
+      setPortalCommentPreview("");
+      portalCommentStatus.textContent =
+        error instanceof Error ? error.message : "이미지를 읽지 못했습니다. 다시 시도해 주세요.";
+      portalCommentStatus.classList.add("is-error");
+    }
+  });
+}
+
 if (portalCommentForm instanceof HTMLFormElement && portalCommentStatus instanceof HTMLElement) {
-  portalCommentForm.addEventListener("submit", (event) => {
+  portalCommentForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const formData = new FormData(portalCommentForm);
     const name = String(formData.get("name") ?? "").trim();
     const title = String(formData.get("title") ?? "").trim();
     const message = String(formData.get("message") ?? "").trim();
+    const avatarFile =
+      portalCommentAvatarInput instanceof HTMLInputElement ? portalCommentAvatarInput.files?.[0] ?? null : null;
 
     portalCommentStatus.textContent = "";
     portalCommentStatus.className = "portal-contact-status";
@@ -449,10 +548,36 @@ if (portalCommentForm instanceof HTMLFormElement && portalCommentStatus instance
       return;
     }
 
+    let avatar = "";
+
+    if (avatarFile) {
+      if (!avatarFile.type.startsWith("image/")) {
+        portalCommentStatus.textContent = "이미지 파일만 선택할 수 있습니다.";
+        portalCommentStatus.classList.add("is-error");
+        return;
+      }
+
+      if (avatarFile.size > portalCommentAvatarMaxBytes) {
+        portalCommentStatus.textContent = "프로필 이미지는 1MB 이하로 선택해 주세요.";
+        portalCommentStatus.classList.add("is-error");
+        return;
+      }
+
+      try {
+        avatar = await readPortalImageFile(avatarFile);
+      } catch (error) {
+        portalCommentStatus.textContent =
+          error instanceof Error ? error.message : "이미지를 읽지 못했습니다. 다시 시도해 주세요.";
+        portalCommentStatus.classList.add("is-error");
+        return;
+      }
+    }
+
     const comment = {
       name,
       title,
       message,
+      avatar,
       createdAt: new Date().toISOString(),
     };
 
@@ -460,6 +585,7 @@ if (portalCommentForm instanceof HTMLFormElement && portalCommentStatus instance
     savePortalComments();
     renderPortalComments();
     portalCommentForm.reset();
+    setPortalCommentPreview("");
     portalCommentStatus.textContent = "댓글이 등록되었습니다.";
     portalCommentStatus.classList.add("is-success");
 

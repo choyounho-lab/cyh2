@@ -75,6 +75,14 @@
         </div>
 
         <form class="portal-contact-form portal-comment-form" id="portal-comment-form">
+          <label class="portal-comment-upload">
+            <span class="portal-comment-upload-label">프로필 사진</span>
+            <input type="file" name="avatar" id="portal-comment-avatar" accept="image/png,image/jpeg,image/webp,image/gif" />
+            <span class="portal-comment-upload-hint">작은 프로필 이미지를 선택해 주세요. 1MB 이하</span>
+          </label>
+          <div class="portal-comment-preview" id="portal-comment-preview" hidden>
+            <img src="" alt="선택한 프로필 미리보기" id="portal-comment-preview-image" />
+          </div>
           <label>
             <span class="portal-sr-only">작성자 이름</span>
             <input type="text" name="name" placeholder="작성자 이름" autocomplete="name" maxlength="24" required />
