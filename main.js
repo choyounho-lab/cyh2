@@ -125,6 +125,7 @@ const portalContactForm = document.querySelector("#portal-contact-form");
 const portalContactStatus = document.querySelector("#portal-contact-status");
 const portalCommentTrigger = document.querySelector("#portal-comment-trigger");
 const portalCommentThread = document.querySelector("#disqus_thread");
+const portalNaverSearchUrl = "https://search.naver.com/search.naver";
 
 function openPortalContactModal() {
   if (!(portalContactModal instanceof HTMLElement)) {
@@ -168,6 +169,17 @@ function initDisqus() {
   script.src = "https://cyhsearch.disqus.com/embed.js";
   script.setAttribute("data-timestamp", String(+new Date()));
   (document.head || document.body).appendChild(script);
+}
+
+function openNaverSearch(query) {
+  const normalized = query.trim();
+
+  if (!normalized) {
+    return;
+  }
+
+  const url = `${portalNaverSearchUrl}?query=${encodeURIComponent(normalized)}`;
+  window.location.href = url;
 }
 
 function renderPortalResults(items, query = "") {
@@ -223,7 +235,7 @@ function runPortalSearch(query) {
 if (portalForm && portalInput instanceof HTMLInputElement) {
   portalForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    runPortalSearch(portalInput.value);
+    openNaverSearch(portalInput.value);
   });
 }
 
@@ -235,8 +247,7 @@ portalButtons.forEach((button) => {
 
     const keyword = button.dataset.portalKeyword ?? "";
     portalInput.value = keyword;
-    runPortalSearch(keyword);
-    portalInput.focus();
+    openNaverSearch(keyword);
   });
 });
 
