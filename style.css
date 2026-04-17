@@ -312,6 +312,20 @@ body::before {
   margin-top: 18px;
 }
 
+.portal-comment-note {
+  margin: 18px 0 0;
+  color: #666;
+  line-height: 1.6;
+}
+
+.portal-comment-thread {
+  padding: 8px 0 0;
+}
+
+.portal-comment-thread .utterances {
+  max-width: 100%;
+}
+
 .portal-comment-item,
 .portal-comment-empty {
   padding: 16px 18px;
