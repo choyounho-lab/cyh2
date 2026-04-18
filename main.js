@@ -123,6 +123,8 @@ const portalContactModal = document.querySelector("#portal-contact-modal");
 const portalContactClose = document.querySelector("#portal-contact-close");
 const portalContactForm = document.querySelector("#portal-contact-form");
 const portalContactStatus = document.querySelector("#portal-contact-status");
+const portalCommentTrigger = document.querySelector("#portal-comment-trigger");
+const portalCommentThread = document.querySelector("#disqus_thread");
 
 function openPortalContactModal() {
   if (!(portalContactModal instanceof HTMLElement)) {
@@ -140,6 +142,26 @@ function closePortalContactModal() {
 
   portalContactModal.hidden = true;
   document.body.classList.remove("portal-modal-open");
+}
+
+function initDisqus() {
+  if (!(portalCommentThread instanceof HTMLElement)) {
+    return;
+  }
+
+  window.disqus_config = function () {
+    this.page.url = window.location.href;
+    this.page.identifier = window.location.pathname || "/";
+  };
+
+  if (document.querySelector('script[src="https://cyhsearch0804.disqus.com/embed.js"]')) {
+    return;
+  }
+
+  const script = document.createElement("script");
+  script.src = "https://cyhsearch0804.disqus.com/embed.js";
+  script.setAttribute("data-timestamp", String(Date.now()));
+  (document.head || document.body).appendChild(script);
 }
 
 function renderPortalResults(items, query = "") {
@@ -304,6 +326,16 @@ if (portalContactModal instanceof HTMLElement) {
   });
 }
 
+if (portalCommentTrigger instanceof HTMLElement) {
+  portalCommentTrigger.addEventListener("click", () => {
+    const commentSection = document.querySelector("#portal-comments");
+
+    if (commentSection instanceof HTMLElement) {
+      commentSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+}
+
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     closePortalContactModal();
@@ -311,3 +343,4 @@ document.addEventListener("keydown", (event) => {
 });
 
 renderPortalResults(portalSearchData.slice(0, 4));
+initDisqus();
