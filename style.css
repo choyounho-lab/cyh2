@@ -241,45 +241,6 @@ body::before {
   overflow: hidden;
 }
 
-.portal-comment-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.portal-comment-trigger {
-  min-height: 42px;
-  padding: 0 18px;
-  border: 1px solid #cfcfcf;
-  border-radius: 999px;
-  background: #f1f1f1;
-  color: #111;
-  font-weight: 700;
-}
-
-.portal-comment-trigger:hover {
-  background: #e5e5e5;
-}
-
-.portal-comment-list {
-  display: grid;
-  gap: 12px;
-  margin-top: 18px;
-}
-
-.portal-comment-embed {
-  padding: 18px;
-  border: 1px solid #dddddd;
-  border-radius: 18px;
-  background: #f8f8f8;
-}
-
-#disqus_thread {
-  width: 100%;
-  min-height: 180px;
-}
-
 .portal-main {
   display: grid;
   gap: 22px;
