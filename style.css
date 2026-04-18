@@ -342,6 +342,43 @@ body::before {
   margin-top: 28px;
 }
 
+.portal-provider-picker {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 16px 18px;
+  border: 1px solid #d8d8d8;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.portal-provider-copy {
+  margin: 0;
+  color: #505050;
+  line-height: 1.6;
+}
+
+.portal-provider-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.portal-provider-button {
+  min-height: 46px;
+  padding: 0 18px;
+  border: 1px solid #cfcfcf;
+  border-radius: 999px;
+  background: #fff;
+  color: #121212;
+  font-weight: 700;
+}
+
+.portal-provider-button:hover {
+  background: #efefef;
+  border-color: #b5b5b5;
+}
+
 .portal-search-box {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

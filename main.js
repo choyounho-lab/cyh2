@@ -114,6 +114,9 @@ const portalSearchData = [
 
 const portalForm = document.querySelector("#portal-search-form");
 const portalInput = document.querySelector("#portal-search-input");
+const portalProviderPicker = document.querySelector("#portal-provider-picker");
+const portalProviderCopy = document.querySelector("#portal-provider-copy");
+const portalProviderButtons = document.querySelectorAll("[data-search-provider]");
 const portalResultsList = document.querySelector("#portal-results-list");
 const portalResultMeta = document.querySelector("#portal-result-meta");
 const portalButtons = document.querySelectorAll("[data-portal-keyword]");
@@ -125,6 +128,10 @@ const portalContactForm = document.querySelector("#portal-contact-form");
 const portalContactStatus = document.querySelector("#portal-contact-status");
 const portalCommentTrigger = document.querySelector("#portal-comment-trigger");
 const portalCommentThread = document.querySelector("#disqus_thread");
+const portalSearchProviders = {
+  naver: "https://search.naver.com/search.naver?query=",
+  google: "https://www.google.com/search?q=",
+};
 
 function openPortalContactModal() {
   if (!(portalContactModal instanceof HTMLElement)) {
@@ -162,6 +169,32 @@ function initDisqus() {
   script.src = "https://cyhsearch0804.disqus.com/embed.js";
   script.setAttribute("data-timestamp", String(Date.now()));
   (document.head || document.body).appendChild(script);
+}
+
+function hideProviderPicker() {
+  if (portalProviderPicker instanceof HTMLElement) {
+    portalProviderPicker.hidden = true;
+  }
+}
+
+function showProviderPicker(query) {
+  if (!(portalProviderPicker instanceof HTMLElement) || !(portalProviderCopy instanceof HTMLElement)) {
+    return;
+  }
+
+  portalProviderCopy.textContent = `"${query}" 검색을 어디서 진행할지 선택하세요.`;
+  portalProviderPicker.hidden = false;
+}
+
+function moveToSearchProvider(provider, query) {
+  const normalizedQuery = query.trim();
+  const baseUrl = portalSearchProviders[provider];
+
+  if (!normalizedQuery || !baseUrl) {
+    return;
+  }
+
+  window.location.href = `${baseUrl}${encodeURIComponent(normalizedQuery)}`;
 }
 
 function renderPortalResults(items, query = "") {
@@ -217,7 +250,16 @@ function runPortalSearch(query) {
 if (portalForm && portalInput instanceof HTMLInputElement) {
   portalForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    runPortalSearch(portalInput.value);
+    const query = portalInput.value.trim();
+
+    if (!query) {
+      hideProviderPicker();
+      runPortalSearch("");
+      return;
+    }
+
+    showProviderPicker(query);
+    runPortalSearch(query);
   });
 }
 
@@ -229,10 +271,29 @@ portalButtons.forEach((button) => {
 
     const keyword = button.dataset.portalKeyword ?? "";
     portalInput.value = keyword;
+    showProviderPicker(keyword);
     runPortalSearch(keyword);
     portalInput.focus();
   });
 });
+
+portalProviderButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (!(button instanceof HTMLButtonElement) || !(portalInput instanceof HTMLInputElement)) {
+      return;
+    }
+
+    moveToSearchProvider(button.dataset.searchProvider ?? "", portalInput.value);
+  });
+});
+
+if (portalInput instanceof HTMLInputElement) {
+  portalInput.addEventListener("input", () => {
+    if (!portalInput.value.trim()) {
+      hideProviderPicker();
+    }
+  });
+}
 
 textWraps.forEach((container, lineIndex) => {
   if (!(container instanceof HTMLElement)) {
