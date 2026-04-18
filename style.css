@@ -456,6 +456,134 @@ body::before {
   gap: 14px;
 }
 
+.portal-section-note {
+  margin: 0;
+  max-width: 380px;
+  color: #6c6c6c;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  text-align: right;
+}
+
+.portal-article-grid,
+.portal-faq-list,
+.portal-trust-links,
+.portal-profile-list {
+  display: grid;
+  gap: 14px;
+}
+
+.portal-article-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.portal-article-card,
+.portal-faq-item,
+.portal-trust-link,
+.portal-profile-item {
+  padding: 18px;
+  border: 1px solid #dfdfdf;
+  border-radius: 18px;
+  background: #f8f8f8;
+}
+
+.portal-article-card h3,
+.portal-faq-item h3 {
+  margin: 10px 0 10px;
+  font-size: 1.02rem;
+  color: #121212;
+}
+
+.portal-article-card p,
+.portal-faq-item p,
+.portal-profile-item p {
+  margin: 0;
+  color: #5f5f5f;
+  line-height: 1.7;
+}
+
+.portal-profile-item strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #111;
+}
+
+.portal-profile-item a,
+.portal-trust-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.portal-trust-link {
+  display: grid;
+  gap: 6px;
+}
+
+.portal-trust-link strong {
+  color: #111;
+}
+
+.portal-trust-link span {
+  color: #606060;
+  line-height: 1.6;
+}
+
+.portal-footer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 24px;
+  padding: 22px 8px 8px;
+  color: #4d4d4d;
+}
+
+.portal-footer p {
+  margin: 6px 0 0;
+}
+
+.portal-footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 14px;
+}
+
+.portal-footer-nav a {
+  color: #444;
+  text-decoration: none;
+}
+
+.portal-doc-body {
+  background: linear-gradient(180deg, #fafafa 0%, #efefef 100%);
+}
+
+.portal-doc-shell {
+  padding-bottom: 56px;
+}
+
+.portal-doc-panel {
+  margin-top: 22px;
+}
+
+.portal-doc-panel h1 {
+  margin: 12px 0 18px;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.05;
+  color: #111;
+}
+
+.portal-doc-panel h2 {
+  margin: 28px 0 10px;
+  color: #111;
+}
+
+.portal-doc-panel p {
+  margin: 0;
+  color: #555;
+  line-height: 1.85;
+}
+
 .portal-results {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -482,7 +610,8 @@ body::before {
   .portal-grid,
   .portal-results,
   .portal-workspace,
-  .portal-shortcuts {
+  .portal-shortcuts,
+  .portal-article-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -498,6 +627,7 @@ body::before {
     align-items: flex-start;
   }
 
+  .portal-comment-head,
   .portal-top-actions {
     width: 100%;
     justify-content: space-between;
@@ -506,6 +636,16 @@ body::before {
 
   .portal-nav {
     padding-top: 0;
+  }
+
+  .portal-panel-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .portal-section-note {
+    max-width: none;
+    text-align: left;
   }
 
   .portal-hero {
@@ -527,6 +667,14 @@ body::before {
 
   .portal-contact-dialog {
     margin-top: 28px;
+  }
+
+  .portal-footer {
+    flex-direction: column;
+  }
+
+  .portal-footer-nav {
+    justify-content: flex-start;
   }
 }
 
