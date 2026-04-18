@@ -57,3 +57,23 @@
 메모
 - 현재 작업 폴더는 Git 저장소가 아니므로 실제 커밋과 푸시는 `../cyh2`에서 진행했다.
 - 이후 작업도 이 파일에 계속 누적 기록하면 된다.
+
+### 12:21 KST
+
+작업 요약
+- Google AdSense 기본 연동 구성을 추가했다.
+- 사이트 소유 및 계정 인식을 위한 메타 태그를 `head`에 추가했다.
+- AdSense 스크립트를 `head`에 추가했다.
+- 루트 경로에서 제공될 `ads.txt` 파일을 생성했다.
+
+세부 작업
+- `index.html`
+  - `<meta name="google-adsense-account" content="ca-pub-6851008593822106">` 추가
+  - AdSense 스크립트 추가
+- `ads.txt`
+  - `google.com, pub-6851008593822106, DIRECT, f08c47fec0942fa0` 생성
+
+수정 파일
+- `index.html`
+- `ads.txt`
+- `WORKLOG.md`
