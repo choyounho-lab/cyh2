@@ -505,8 +505,7 @@ body::before {
 .portal-article-grid,
 .portal-faq-list,
 .portal-trust-links,
-.portal-profile-list,
-.portal-history-list {
+.portal-profile-list {
   display: grid;
   gap: 14px;
 }
@@ -518,46 +517,11 @@ body::before {
 .portal-article-card,
 .portal-faq-item,
 .portal-trust-link,
-.portal-profile-item,
-.portal-history-item {
+.portal-profile-item {
   padding: 18px;
   border: 1px solid #dfdfdf;
   border-radius: 18px;
   background: #f8f8f8;
-}
-
-.portal-history-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-
-.portal-history-meta strong {
-  color: #111;
-  font-size: 0.95rem;
-}
-
-.portal-history-meta span {
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: #e8f4ed;
-  color: #0f7b50;
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-
-.portal-history-item h3 {
-  margin: 0 0 8px;
-  color: #111;
-  font-size: 1.02rem;
-}
-
-.portal-history-item p {
-  margin: 0;
-  color: #5d5d5d;
-  line-height: 1.7;
 }
 
 .portal-article-card h3,
