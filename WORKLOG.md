@@ -41,6 +41,30 @@
 - `style.css`
 - `WORKLOG.md`
 
+## 2026-04-19
+
+### 14:10 KST
+
+작업 요약
+- 모든 HTML 문서에 Google Analytics `gtag.js` 추적 태그를 추가했다.
+- 동일한 측정 ID `G-K3983SRBJQ`를 공통 적용해 각 페이지 접근을 추적할 수 있게 맞췄다.
+
+세부 작업
+- 다음 파일의 `head`에 Google tag 스니펫 추가
+  - `index.html`
+  - `about.html`
+  - `content-policy.html`
+  - `privacy.html`
+  - `terms.html`
+
+수정 파일
+- `index.html`
+- `about.html`
+- `content-policy.html`
+- `privacy.html`
+- `terms.html`
+- `WORKLOG.md`
+
 커밋 이력
 - `3ff4f51` `Deploy static site update`
 - `634953b` `Add Disqus comments section`
