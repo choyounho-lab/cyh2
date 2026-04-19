@@ -65,6 +65,28 @@
 - `terms.html`
 - `WORKLOG.md`
 
+### 20:53 KST
+
+작업 요약
+- 모든 HTML 문서에 Microsoft Clarity 추적 태그를 추가했다.
+- Clarity 프로젝트 ID `we490lbbcm`를 공통 적용해 페이지 사용 흐름을 기록할 수 있게 맞췄다.
+
+세부 작업
+- 다음 파일의 `head`에 Microsoft Clarity 스니펫 추가
+  - `index.html`
+  - `about.html`
+  - `content-policy.html`
+  - `privacy.html`
+  - `terms.html`
+
+수정 파일
+- `index.html`
+- `about.html`
+- `content-policy.html`
+- `privacy.html`
+- `terms.html`
+- `WORKLOG.md`
+
 커밋 이력
 - `3ff4f51` `Deploy static site update`
 - `634953b` `Add Disqus comments section`
