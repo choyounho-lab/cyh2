@@ -373,6 +373,11 @@ function buildFxLine(values, width, height, min, max) {
     .join(" ");
 }
 
+function normalizeFxValues(values) {
+  const base = values[0] || 1;
+  return values.map((value) => ((value - base) / base) * 100);
+}
+
 function buildFxDots(values, width, height, min, max, colorClass) {
   const range = max - min || 1;
   return values
@@ -397,9 +402,13 @@ function renderFxChart() {
 
   const width = 640;
   const height = 240;
-  const allValues = portalFxSeries.flatMap((series) => series.values);
-  const min = Math.min(...allValues) - 10;
-  const max = Math.max(...allValues) + 10;
+  const normalizedSeries = portalFxSeries.map((series) => ({
+    ...series,
+    normalizedValues: normalizeFxValues(series.values),
+  }));
+  const allValues = normalizedSeries.flatMap((series) => series.normalizedValues);
+  const min = Math.min(...allValues, -0.2) - 0.1;
+  const max = Math.max(...allValues, 0.2) + 0.1;
   const yTicks = 5;
   const tickValues = Array.from({ length: yTicks }, (_, index) => {
     const ratio = 1 - index / (yTicks - 1);
@@ -416,9 +425,10 @@ function renderFxChart() {
     .join("");
 
   const seriesSvg = portalFxSeries
-    .map((series) => {
-      const path = buildFxLine(series.values, width, height, min, max);
-      const dots = buildFxDots(series.values, width, height, min, max, series.colorClass);
+    .map((series, index) => {
+      const normalized = normalizedSeries[index].normalizedValues;
+      const path = buildFxLine(normalized, width, height, min, max);
+      const dots = buildFxDots(normalized, width, height, min, max, series.colorClass);
       return `
         <g class="portal-fx-series ${series.colorClass}">
           <path class="portal-fx-path ${series.colorClass}" d="${path}" />
@@ -438,7 +448,7 @@ function renderFxChart() {
 
   portalFxYAxis.innerHTML = tickValues
     .map((series) => {
-      return `<span>${series.toFixed(0)}</span>`;
+      return `<span>${series > 0 ? "+" : ""}${series.toFixed(2)}%</span>`;
     })
     .join("");
 
@@ -485,8 +495,9 @@ function bindFxTooltip() {
       if (!series) {
         return;
       }
+      const normalized = normalizeFxValues(series.values);
       portalFxTooltip.hidden = false;
-      portalFxTooltip.textContent = `${series.label} · ${portalFxLabels[pointIndex]} · ${series.values[pointIndex].toFixed(1)}`;
+      portalFxTooltip.textContent = `${series.label} · ${portalFxLabels[pointIndex]} · ${series.values[pointIndex].toFixed(1)} (${normalized[pointIndex] > 0 ? "+" : ""}${normalized[pointIndex].toFixed(2)}%)`;
     });
 
     dot.addEventListener("mouseleave", () => {
