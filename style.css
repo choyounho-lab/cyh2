@@ -555,6 +555,21 @@ body::before {
   gap: 12px;
 }
 
+.portal-calendar-controls {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.portal-calendar-nav {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid #cfd8e2;
+  border-radius: 999px;
+  background: #fff;
+  color: #111;
+  font-weight: 700;
+}
+
 .portal-calendar-header strong,
 .portal-fx-series-head strong {
   color: #111;
@@ -585,6 +600,7 @@ body::before {
   border: 1px solid #dfdfdf;
   border-radius: 16px;
   background: #f8f8f8;
+  text-align: left;
 }
 
 .portal-calendar-day span {
@@ -601,6 +617,29 @@ body::before {
   border-color: #8bb6d6;
   background: #eef6fb;
   box-shadow: inset 0 0 0 1px rgba(71, 129, 171, 0.14);
+}
+
+.portal-calendar-day.is-selected {
+  border-color: #3c7cb3;
+  background: linear-gradient(180deg, #eef6fb 0%, #dcecf8 100%);
+}
+
+.portal-calendar-detail {
+  padding: 18px;
+  border: 1px solid #dfdfdf;
+  border-radius: 18px;
+  background: #f8f8f8;
+}
+
+.portal-calendar-detail strong {
+  display: block;
+  color: #111;
+}
+
+.portal-calendar-detail p {
+  margin: 8px 0 0;
+  color: #5d5d5d;
+  line-height: 1.7;
 }
 
 .portal-fx-legend {
@@ -713,6 +752,13 @@ body::before {
 
 .portal-fx-axis span {
   text-align: center;
+}
+
+.portal-fx-note {
+  margin: 0;
+  color: #5d5d5d;
+  font-size: 0.88rem;
+  line-height: 1.6;
 }
 
 .portal-fx-summary {

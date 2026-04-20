@@ -122,10 +122,15 @@ const portalResultMeta = document.querySelector("#portal-result-meta");
 const portalCalendarTitle = document.querySelector("#portal-calendar-title");
 const portalCalendarSummary = document.querySelector("#portal-calendar-summary");
 const portalCalendarDays = document.querySelector("#portal-calendar-days");
+const portalCalendarPrev = document.querySelector("#portal-calendar-prev");
+const portalCalendarNext = document.querySelector("#portal-calendar-next");
+const portalCalendarDetailTitle = document.querySelector("#portal-calendar-detail-title");
+const portalCalendarDetailCopy = document.querySelector("#portal-calendar-detail-copy");
 const portalFxChart = document.querySelector("#portal-fx-chart");
 const portalFxAxis = document.querySelector("#portal-fx-axis");
 const portalFxYAxis = document.querySelector("#portal-fx-yaxis");
 const portalFxSummary = document.querySelector("#portal-fx-summary");
+const portalFxNote = document.querySelector("#portal-fx-note");
 const portalButtons = document.querySelectorAll("[data-portal-keyword]");
 const textWraps = document.querySelectorAll(".text-wrap");
 const portalContactTrigger = document.querySelector("#portal-contact-trigger");
@@ -139,7 +144,7 @@ const portalSearchProviders = {
   naver: "https://search.naver.com/search.naver?query=",
   google: "https://www.google.com/search?q=",
 };
-const portalFxSeries = [
+const portalFxFallbackSeries = [
   {
     key: "usd",
     label: "USD/KRW",
@@ -159,7 +164,10 @@ const portalFxSeries = [
     values: [1462.5, 1468.2, 1465.7, 1472.9, 1469.6, 1464.8, 1460.4],
   },
 ];
-const portalFxLabels = ["04/14", "04/15", "04/16", "04/17", "04/18", "04/19", "04/20"];
+let portalFxSeries = portalFxFallbackSeries;
+let portalFxLabels = ["04/14", "04/15", "04/16", "04/17", "04/18", "04/19", "04/20"];
+let portalCalendarCursor = new Date();
+let portalSelectedDateKey = "";
 
 function openPortalContactModal() {
   if (!(portalContactModal instanceof HTMLElement)) {
@@ -229,36 +237,60 @@ function renderCalendar() {
   if (
     !(portalCalendarTitle instanceof HTMLElement) ||
     !(portalCalendarSummary instanceof HTMLElement) ||
-    !(portalCalendarDays instanceof HTMLElement)
+    !(portalCalendarDays instanceof HTMLElement) ||
+    !(portalCalendarDetailTitle instanceof HTMLElement) ||
+    !(portalCalendarDetailCopy instanceof HTMLElement)
   ) {
     return;
   }
 
   const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
+  const year = portalCalendarCursor.getFullYear();
+  const month = portalCalendarCursor.getMonth();
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const startWeekday = firstDay.getDay();
   const totalDays = lastDay.getDate();
   const days = [];
+  const selectedKey = portalSelectedDateKey || `${year}-${String(month + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  const weekdayNames = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
 
   for (let i = 0; i < startWeekday; i += 1) {
     days.push('<div class="portal-calendar-day is-empty" aria-hidden="true"></div>');
   }
 
   for (let day = 1; day <= totalDays; day += 1) {
-    const isToday = day === today.getDate();
+    const dateKey = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    const isToday = year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
+    const isSelected = dateKey === selectedKey;
     days.push(`
-      <div class="portal-calendar-day${isToday ? " is-today" : ""}">
+      <button type="button" class="portal-calendar-day${isToday ? " is-today" : ""}${isSelected ? " is-selected" : ""}" data-calendar-date="${dateKey}">
         <span>${day}</span>
-      </div>
+      </button>
     `);
   }
 
   portalCalendarTitle.textContent = `${year}년 ${month + 1}월`;
-  portalCalendarSummary.textContent = `${totalDays}일 구성, 오늘은 ${today.getDate()}일`;
+  portalCalendarSummary.textContent = `${totalDays}일 구성, 클릭해서 날짜별 상세를 볼 수 있습니다.`;
   portalCalendarDays.innerHTML = days.join("");
+  portalSelectedDateKey = selectedKey;
+
+  const [selectedYear, selectedMonth, selectedDay] = selectedKey.split("-").map(Number);
+  const selectedDate = new Date(selectedYear, selectedMonth - 1, selectedDay);
+  const isWeekend = selectedDate.getDay() === 0 || selectedDate.getDay() === 6;
+  portalCalendarDetailTitle.textContent = `${selectedYear}년 ${selectedMonth}월 ${selectedDay}일`;
+  portalCalendarDetailCopy.textContent = `${weekdayNames[selectedDate.getDay()]}${isWeekend ? " · 주말" : " · 평일"} · 이 날짜 기준 일정이나 메모를 연결할 수 있습니다.`;
+
+  portalCalendarDays.querySelectorAll("[data-calendar-date]").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (!(button instanceof HTMLButtonElement)) {
+        return;
+      }
+
+      portalSelectedDateKey = button.dataset.calendarDate ?? "";
+      renderCalendar();
+    });
+  });
 }
 
 function buildFxLine(values, width, height, min, max) {
@@ -288,7 +320,8 @@ function renderFxChart() {
     !(portalFxChart instanceof HTMLElement) ||
     !(portalFxAxis instanceof HTMLElement) ||
     !(portalFxYAxis instanceof HTMLElement) ||
-    !(portalFxSummary instanceof HTMLElement)
+    !(portalFxSummary instanceof HTMLElement) ||
+    !(portalFxNote instanceof HTMLElement)
   ) {
     return;
   }
@@ -363,6 +396,61 @@ function renderFxChart() {
       `;
     })
     .join("");
+}
+
+async function fetchFxSeries(base, label, colorClass, transform = (value) => value) {
+  const end = new Date();
+  const start = new Date();
+  start.setDate(end.getDate() - 6);
+  const formatDate = (value) => value.toISOString().slice(0, 10);
+  const response = await fetch(
+    `https://api.frankfurter.dev/v1/${formatDate(start)}..${formatDate(end)}?base=${base}&symbols=KRW`,
+  );
+
+  if (!response.ok) {
+    throw new Error(`${label} 환율 데이터를 불러오지 못했습니다.`);
+  }
+
+  const data = await response.json();
+  const entries = Object.entries(data.rates ?? {}).sort(([left], [right]) => left.localeCompare(right));
+
+  return {
+    key: colorClass,
+    label,
+    colorClass,
+    values: entries.map(([, rate]) => transform(rate.KRW)),
+    labels: entries.map(([date]) => date.slice(5).replace("-", "/")),
+    latestDate: data.end_date ?? formatDate(end),
+  };
+}
+
+async function loadLiveFxChart() {
+  if (!(portalFxNote instanceof HTMLElement)) {
+    return;
+  }
+
+  portalFxNote.textContent = "실제 환율 데이터를 불러오는 중입니다.";
+
+  try {
+    const [usd, jpy, eur] = await Promise.all([
+      fetchFxSeries("USD", "USD/KRW", "usd"),
+      fetchFxSeries("JPY", "JPY/KRW (100엔)", "jpy", (value) => value * 100),
+      fetchFxSeries("EUR", "EUR/KRW", "eur"),
+    ]);
+
+    portalFxSeries = [usd, jpy, eur];
+    portalFxLabels = usd.labels;
+    renderFxChart();
+    portalFxNote.textContent = `실시간 기준이 아닌 최근 공식 일일 환율입니다. 최신 기준일: ${usd.latestDate}`;
+  } catch (error) {
+    portalFxSeries = portalFxFallbackSeries;
+    portalFxLabels = ["04/14", "04/15", "04/16", "04/17", "04/18", "04/19", "04/20"];
+    renderFxChart();
+    portalFxNote.textContent =
+      error instanceof Error
+        ? `${error.message} 기본 샘플 데이터로 표시합니다.`
+        : "환율 데이터를 불러오지 못해 기본 샘플 데이터로 표시합니다.";
+  }
 }
 
 function renderPortalResults(items, query = "") {
@@ -460,6 +548,22 @@ if (portalInput instanceof HTMLInputElement) {
     if (!portalInput.value.trim()) {
       hideProviderPicker();
     }
+  });
+}
+
+if (portalCalendarPrev instanceof HTMLButtonElement) {
+  portalCalendarPrev.addEventListener("click", () => {
+    portalCalendarCursor = new Date(portalCalendarCursor.getFullYear(), portalCalendarCursor.getMonth() - 1, 1);
+    portalSelectedDateKey = "";
+    renderCalendar();
+  });
+}
+
+if (portalCalendarNext instanceof HTMLButtonElement) {
+  portalCalendarNext.addEventListener("click", () => {
+    portalCalendarCursor = new Date(portalCalendarCursor.getFullYear(), portalCalendarCursor.getMonth() + 1, 1);
+    portalSelectedDateKey = "";
+    renderCalendar();
   });
 }
 
@@ -574,4 +678,5 @@ document.addEventListener("keydown", (event) => {
 renderPortalResults(portalSearchData.slice(0, 4));
 renderCalendar();
 renderFxChart();
+loadLiveFxChart();
 initDisqus();
