@@ -54,6 +54,25 @@
       </div>
     </header>
 
+    <div class="portal-sticky-search" id="portal-sticky-search" hidden>
+      <form class="portal-sticky-search-form" id="portal-sticky-search-form" role="search">
+        <input
+          id="portal-sticky-search-input"
+          type="search"
+          placeholder="검색어를 입력하고 엔진을 선택하세요"
+          autocomplete="off"
+        />
+        <button type="submit">검색</button>
+      </form>
+    </div>
+
+    <aside class="portal-quick-panel" aria-label="빠른 패널">
+      <a href="#portal-search-form" class="portal-quick-link">검색</a>
+      <a href="#portal-tools" class="portal-quick-link">환율</a>
+      <a href="#portal-calendar-title" class="portal-quick-link">날짜</a>
+      <button type="button" class="portal-quick-link is-button" id="portal-quick-contact">문의</button>
+    </aside>
+
     <div class="portal-contact-modal" id="portal-contact-modal" hidden>
       <div class="portal-contact-backdrop" data-contact-close></div>
       <div class="portal-contact-dialog" role="dialog" aria-modal="true" aria-labelledby="portal-contact-title">
@@ -92,6 +111,24 @@
 
     <main class="portal-main">
       <section class="portal-hero" aria-label="검색 영역">
+        <div class="portal-live-strip">
+          <div class="portal-live-card">
+            <span>오늘 날짜</span>
+            <strong id="portal-live-date">2026년 4월 20일</strong>
+          </div>
+          <div class="portal-live-card">
+            <span>현재 시각</span>
+            <strong id="portal-live-time">18:00 KST</strong>
+          </div>
+          <div class="portal-live-card">
+            <span>서울 날씨</span>
+            <strong id="portal-live-weather">날씨 불러오는 중</strong>
+          </div>
+          <div class="portal-live-card">
+            <span>환율 요약</span>
+            <strong id="portal-live-fx">USD/KRW 확인 중</strong>
+          </div>
+        </div>
         <p class="portal-label">Simple Search Start</p>
         <h1 class="portal-hero-title">
           <span class="text-wrap" data-text="찾고 싶은 내용을"></span>
@@ -124,12 +161,38 @@
           </div>
         </div>
 
+        <div class="portal-mini-metrics">
+          <article class="portal-mini-metric">
+            <span>오늘 달러</span>
+            <strong id="portal-mini-usd">-</strong>
+          </article>
+          <article class="portal-mini-metric">
+            <span>오늘 유로</span>
+            <strong id="portal-mini-eur">-</strong>
+          </article>
+          <article class="portal-mini-metric">
+            <span>100엔 기준</span>
+            <strong id="portal-mini-jpy">-</strong>
+          </article>
+          <article class="portal-mini-metric">
+            <span>이번 달 남은 일수</span>
+            <strong id="portal-mini-month-left">-</strong>
+          </article>
+        </div>
+
         <div class="portal-keyword-row" aria-label="추천 검색어">
           <button type="button" class="portal-chip" data-portal-keyword="오늘 일정">오늘 일정</button>
           <button type="button" class="portal-chip" data-portal-keyword="실시간 뉴스">실시간 뉴스</button>
           <button type="button" class="portal-chip" data-portal-keyword="메일 확인">메일 확인</button>
           <button type="button" class="portal-chip" data-portal-keyword="쇼핑 추천">쇼핑 추천</button>
           <button type="button" class="portal-chip" data-portal-keyword="지도 검색">지도 검색</button>
+        </div>
+
+        <div class="portal-live-badges">
+          <span class="portal-live-badge">실시간 검색 엔진 선택</span>
+          <span class="portal-live-badge">서울 날씨 한 줄 요약</span>
+          <span class="portal-live-badge">최근 7일 환율 추적</span>
+          <span class="portal-live-badge">월별 캘린더 인터랙션</span>
         </div>
       </section>
 
@@ -231,6 +294,50 @@
         </div>
       </section>
 
+      <section class="portal-grid portal-feed-grid" aria-label="추천 피드">
+        <article class="portal-panel portal-feed-panel">
+          <div class="portal-panel-head">
+            <h2>오늘 많이 찾는 주제</h2>
+            <span>Trending Topics</span>
+          </div>
+          <div class="portal-feed-list">
+            <article class="portal-feed-item">
+              <strong>환율 체크</strong>
+              <p>달러, 유로, 100엔 기준 흐름을 빠르게 비교하는 방문이 많습니다.</p>
+            </article>
+            <article class="portal-feed-item">
+              <strong>이번 달 일정 정리</strong>
+              <p>월간 캘린더에서 공휴일과 메모 배지를 확인하려는 수요가 높습니다.</p>
+            </article>
+            <article class="portal-feed-item">
+              <strong>오늘 볼 만한 정보</strong>
+              <p>검색 시작 전 주요 흐름을 요약해주는 짧은 가이드 콘텐츠가 함께 읽히고 있습니다.</p>
+            </article>
+          </div>
+        </article>
+
+        <article class="portal-panel portal-feed-panel">
+          <div class="portal-panel-head">
+            <h2>최근 업데이트</h2>
+            <span>Recent Updates</span>
+          </div>
+          <div class="portal-feed-list">
+            <article class="portal-feed-item">
+              <strong>실시간 환율 API 연결</strong>
+              <p>최근 7일 공식 환율 흐름을 기반으로 차트를 자동 갱신하도록 구성했습니다.</p>
+            </article>
+            <article class="portal-feed-item">
+              <strong>고급 캘린더 위젯</strong>
+              <p>월 이동, 날짜 선택, 공휴일 표시, 날짜 상세 패널을 추가했습니다.</p>
+            </article>
+            <article class="portal-feed-item">
+              <strong>검색 경험 강화</strong>
+              <p>스크롤 중에도 검색을 이어갈 수 있도록 상단 고정 검색 바를 제공합니다.</p>
+            </article>
+          </div>
+        </article>
+      </section>
+
       <section class="portal-panel" id="portal-comments" aria-label="댓글 영역">
         <div class="portal-panel-head portal-comment-head">
           <div>
@@ -256,8 +363,8 @@
         <div class="portal-results" id="portal-results-list"></div>
       </section>
 
-      <section class="portal-grid" id="portal-tools" aria-label="도구 위젯">
-        <article class="portal-panel">
+      <section class="portal-grid portal-tools-grid" id="portal-tools" aria-label="도구 위젯">
+        <article class="portal-panel portal-panel-primary-tool">
           <div class="portal-panel-head">
             <div>
               <h2>월별 캘린더</h2>
@@ -293,7 +400,7 @@
           </div>
         </article>
 
-        <article class="portal-panel">
+        <article class="portal-panel portal-panel-secondary-tool">
           <div class="portal-panel-head">
             <div>
               <h2>환율 그래프</h2>
@@ -374,9 +481,9 @@
           </div>
         </article>
 
-        <article class="portal-panel">
+        <article class="portal-panel portal-trust-panel">
           <div class="portal-panel-head">
-            <h2>정책 및 안내</h2>
+            <h2>서비스 안내 센터</h2>
             <span>Trust Center</span>
           </div>
           <div class="portal-trust-links">

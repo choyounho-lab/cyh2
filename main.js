@@ -114,6 +114,9 @@ const portalSearchData = [
 
 const portalForm = document.querySelector("#portal-search-form");
 const portalInput = document.querySelector("#portal-search-input");
+const portalStickySearch = document.querySelector("#portal-sticky-search");
+const portalStickySearchForm = document.querySelector("#portal-sticky-search-form");
+const portalStickySearchInput = document.querySelector("#portal-sticky-search-input");
 const portalProviderPicker = document.querySelector("#portal-provider-picker");
 const portalProviderCopy = document.querySelector("#portal-provider-copy");
 const portalProviderButtons = document.querySelectorAll("[data-search-provider]");
@@ -126,6 +129,14 @@ const portalCalendarPrev = document.querySelector("#portal-calendar-prev");
 const portalCalendarNext = document.querySelector("#portal-calendar-next");
 const portalCalendarDetailTitle = document.querySelector("#portal-calendar-detail-title");
 const portalCalendarDetailCopy = document.querySelector("#portal-calendar-detail-copy");
+const portalLiveDate = document.querySelector("#portal-live-date");
+const portalLiveTime = document.querySelector("#portal-live-time");
+const portalLiveWeather = document.querySelector("#portal-live-weather");
+const portalLiveFx = document.querySelector("#portal-live-fx");
+const portalMiniUsd = document.querySelector("#portal-mini-usd");
+const portalMiniEur = document.querySelector("#portal-mini-eur");
+const portalMiniJpy = document.querySelector("#portal-mini-jpy");
+const portalMiniMonthLeft = document.querySelector("#portal-mini-month-left");
 const portalFxChart = document.querySelector("#portal-fx-chart");
 const portalFxAxis = document.querySelector("#portal-fx-axis");
 const portalFxYAxis = document.querySelector("#portal-fx-yaxis");
@@ -140,6 +151,7 @@ const portalContactForm = document.querySelector("#portal-contact-form");
 const portalContactStatus = document.querySelector("#portal-contact-status");
 const portalCommentTrigger = document.querySelector("#portal-comment-trigger");
 const portalCommentThread = document.querySelector("#disqus_thread");
+const portalQuickContact = document.querySelector("#portal-quick-contact");
 const portalSearchProviders = {
   naver: "https://search.naver.com/search.naver?query=",
   google: "https://www.google.com/search?q=",
@@ -168,6 +180,13 @@ let portalFxSeries = portalFxFallbackSeries;
 let portalFxLabels = ["04/14", "04/15", "04/16", "04/17", "04/18", "04/19", "04/20"];
 let portalCalendarCursor = new Date();
 let portalSelectedDateKey = "";
+let portalHolidayMap = new Map();
+const portalDateNotes = {
+  "04-07": "주간 정리",
+  "04-15": "환율 점검",
+  "04-20": "업데이트 확인",
+  "04-28": "월말 메모",
+};
 
 function openPortalContactModal() {
   if (!(portalContactModal instanceof HTMLElement)) {
@@ -211,6 +230,25 @@ function hideProviderPicker() {
   if (portalProviderPicker instanceof HTMLElement) {
     portalProviderPicker.hidden = true;
   }
+}
+
+function handleSearchIntent(query) {
+  if (!(portalInput instanceof HTMLInputElement)) {
+    return;
+  }
+
+  const normalized = query.trim();
+  portalInput.value = normalized;
+
+  if (!normalized) {
+    hideProviderPicker();
+    runPortalSearch("");
+    return;
+  }
+
+  showProviderPicker(normalized);
+  runPortalSearch(normalized);
+  document.querySelector(".portal-hero")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function showProviderPicker(query) {
@@ -263,9 +301,16 @@ function renderCalendar() {
     const dateKey = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
     const isToday = year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
     const isSelected = dateKey === selectedKey;
+    const holidayName = portalHolidayMap.get(dateKey);
+    const noteKey = `${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    const noteLabel = portalDateNotes[noteKey];
     days.push(`
-      <button type="button" class="portal-calendar-day${isToday ? " is-today" : ""}${isSelected ? " is-selected" : ""}" data-calendar-date="${dateKey}">
+      <button type="button" class="portal-calendar-day${isToday ? " is-today" : ""}${isSelected ? " is-selected" : ""}${holidayName ? " is-holiday" : ""}${noteLabel ? " has-note" : ""}" data-calendar-date="${dateKey}">
         <span>${day}</span>
+        <div class="portal-calendar-markers">
+          ${holidayName ? '<em class="portal-calendar-marker holiday"></em>' : ""}
+          ${noteLabel ? '<em class="portal-calendar-marker note"></em>' : ""}
+        </div>
       </button>
     `);
   }
@@ -278,8 +323,10 @@ function renderCalendar() {
   const [selectedYear, selectedMonth, selectedDay] = selectedKey.split("-").map(Number);
   const selectedDate = new Date(selectedYear, selectedMonth - 1, selectedDay);
   const isWeekend = selectedDate.getDay() === 0 || selectedDate.getDay() === 6;
+  const selectedHoliday = portalHolidayMap.get(selectedKey);
+  const selectedNote = portalDateNotes[`${String(selectedMonth).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`];
   portalCalendarDetailTitle.textContent = `${selectedYear}년 ${selectedMonth}월 ${selectedDay}일`;
-  portalCalendarDetailCopy.textContent = `${weekdayNames[selectedDate.getDay()]}${isWeekend ? " · 주말" : " · 평일"} · 이 날짜 기준 일정이나 메모를 연결할 수 있습니다.`;
+  portalCalendarDetailCopy.textContent = `${weekdayNames[selectedDate.getDay()]}${isWeekend ? " · 주말" : " · 평일"}${selectedHoliday ? ` · 공휴일: ${selectedHoliday}` : ""}${selectedNote ? ` · 메모: ${selectedNote}` : " · 이 날짜 기준 일정이나 메모를 연결할 수 있습니다."}`;
 
   portalCalendarDays.querySelectorAll("[data-calendar-date]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -442,6 +489,7 @@ async function loadLiveFxChart() {
     portalFxLabels = usd.labels;
     renderFxChart();
     portalFxNote.textContent = `실시간 기준이 아닌 최근 공식 일일 환율입니다. 최신 기준일: ${usd.latestDate}`;
+    updateHeroMetrics();
   } catch (error) {
     portalFxSeries = portalFxFallbackSeries;
     portalFxLabels = ["04/14", "04/15", "04/16", "04/17", "04/18", "04/19", "04/20"];
@@ -450,7 +498,108 @@ async function loadLiveFxChart() {
       error instanceof Error
         ? `${error.message} 기본 샘플 데이터로 표시합니다.`
         : "환율 데이터를 불러오지 못해 기본 샘플 데이터로 표시합니다.";
+    updateHeroMetrics();
   }
+}
+
+async function loadWeather() {
+  if (!(portalLiveWeather instanceof HTMLElement)) {
+    return;
+  }
+
+  try {
+    const response = await fetch("https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current=temperature_2m,apparent_temperature,weather_code&timezone=Asia%2FSeoul");
+    if (!response.ok) {
+      throw new Error("날씨 정보를 불러오지 못했습니다.");
+    }
+    const data = await response.json();
+    const current = data.current ?? {};
+    const weatherMap = {
+      0: "맑음",
+      1: "대체로 맑음",
+      2: "구름 조금",
+      3: "흐림",
+      45: "안개",
+      51: "이슬비",
+      61: "비",
+      71: "눈",
+      80: "소나기",
+      95: "뇌우",
+    };
+    const weatherLabel = weatherMap[current.weather_code] ?? "기상 확인";
+    portalLiveWeather.textContent = `${weatherLabel} ${current.temperature_2m ?? "-"}°C`;
+  } catch {
+    portalLiveWeather.textContent = "서울 날씨 확인 불가";
+  }
+}
+
+async function loadHolidays(year) {
+  try {
+    const response = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${year}/KR`);
+    if (!response.ok) {
+      throw new Error("holiday fetch failed");
+    }
+    const data = await response.json();
+    portalHolidayMap = new Map(data.map((item) => [item.date, item.localName || item.name]));
+  } catch {
+    portalHolidayMap = new Map();
+  }
+  renderCalendar();
+}
+
+function updateClock() {
+  const now = new Date();
+  if (portalLiveDate instanceof HTMLElement) {
+    portalLiveDate.textContent = now.toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "short",
+    });
+  }
+
+  if (portalLiveTime instanceof HTMLElement) {
+    portalLiveTime.textContent = now.toLocaleTimeString("ko-KR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: "Asia/Seoul",
+    }) + " KST";
+  }
+
+  if (portalMiniMonthLeft instanceof HTMLElement) {
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    portalMiniMonthLeft.textContent = `${lastDay - now.getDate()}일`;
+  }
+}
+
+function updateHeroMetrics() {
+  const usdSeries = portalFxSeries.find((series) => series.key === "usd");
+  const eurSeries = portalFxSeries.find((series) => series.key === "eur");
+  const jpySeries = portalFxSeries.find((series) => series.key === "jpy");
+  if (portalMiniUsd instanceof HTMLElement && usdSeries) {
+    portalMiniUsd.textContent = usdSeries.values.at(-1)?.toFixed(1) ?? "-";
+  }
+  if (portalMiniEur instanceof HTMLElement && eurSeries) {
+    portalMiniEur.textContent = eurSeries.values.at(-1)?.toFixed(1) ?? "-";
+  }
+  if (portalMiniJpy instanceof HTMLElement && jpySeries) {
+    portalMiniJpy.textContent = jpySeries.values.at(-1)?.toFixed(1) ?? "-";
+  }
+  if (portalLiveFx instanceof HTMLElement && usdSeries) {
+    const latest = usdSeries.values.at(-1)?.toFixed(1) ?? "-";
+    const previous = usdSeries.values.at(-2) ?? usdSeries.values.at(-1) ?? 0;
+    const latestValue = usdSeries.values.at(-1) ?? 0;
+    const diff = latestValue - previous;
+    portalLiveFx.textContent = `USD/KRW ${latest} · ${diff >= 0 ? "+" : ""}${diff.toFixed(1)}`;
+  }
+}
+
+function syncStickySearchVisibility() {
+  if (!(portalStickySearch instanceof HTMLElement)) {
+    return;
+  }
+  portalStickySearch.hidden = window.scrollY < 220;
 }
 
 function renderPortalResults(items, query = "") {
@@ -506,16 +655,14 @@ function runPortalSearch(query) {
 if (portalForm && portalInput instanceof HTMLInputElement) {
   portalForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    const query = portalInput.value.trim();
+    handleSearchIntent(portalInput.value);
+  });
+}
 
-    if (!query) {
-      hideProviderPicker();
-      runPortalSearch("");
-      return;
-    }
-
-    showProviderPicker(query);
-    runPortalSearch(query);
+if (portalStickySearchForm && portalStickySearchInput instanceof HTMLInputElement) {
+  portalStickySearchForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    handleSearchIntent(portalStickySearchInput.value);
   });
 }
 
@@ -526,9 +673,7 @@ portalButtons.forEach((button) => {
     }
 
     const keyword = button.dataset.portalKeyword ?? "";
-    portalInput.value = keyword;
-    showProviderPicker(keyword);
-    runPortalSearch(keyword);
+    handleSearchIntent(keyword);
     portalInput.focus();
   });
 });
@@ -548,14 +693,15 @@ if (portalInput instanceof HTMLInputElement) {
     if (!portalInput.value.trim()) {
       hideProviderPicker();
     }
+    if (portalStickySearchInput instanceof HTMLInputElement) {
+      portalStickySearchInput.value = portalInput.value;
+    }
   });
 }
 
-if (portalCalendarPrev instanceof HTMLButtonElement) {
-  portalCalendarPrev.addEventListener("click", () => {
-    portalCalendarCursor = new Date(portalCalendarCursor.getFullYear(), portalCalendarCursor.getMonth() - 1, 1);
-    portalSelectedDateKey = "";
-    renderCalendar();
+if (portalStickySearchInput instanceof HTMLInputElement && portalInput instanceof HTMLInputElement) {
+  portalStickySearchInput.addEventListener("input", () => {
+    portalInput.value = portalStickySearchInput.value;
   });
 }
 
@@ -563,6 +709,16 @@ if (portalCalendarNext instanceof HTMLButtonElement) {
   portalCalendarNext.addEventListener("click", () => {
     portalCalendarCursor = new Date(portalCalendarCursor.getFullYear(), portalCalendarCursor.getMonth() + 1, 1);
     portalSelectedDateKey = "";
+    loadHolidays(portalCalendarCursor.getFullYear());
+    renderCalendar();
+  });
+}
+
+if (portalCalendarPrev instanceof HTMLButtonElement) {
+  portalCalendarPrev.addEventListener("click", () => {
+    portalCalendarCursor = new Date(portalCalendarCursor.getFullYear(), portalCalendarCursor.getMonth() - 1, 1);
+    portalSelectedDateKey = "";
+    loadHolidays(portalCalendarCursor.getFullYear());
     renderCalendar();
   });
 }
@@ -646,6 +802,10 @@ if (portalContactTrigger instanceof HTMLElement) {
   portalContactTrigger.addEventListener("click", openPortalContactModal);
 }
 
+if (portalQuickContact instanceof HTMLButtonElement) {
+  portalQuickContact.addEventListener("click", openPortalContactModal);
+}
+
 if (portalContactClose instanceof HTMLElement) {
   portalContactClose.addEventListener("click", closePortalContactModal);
 }
@@ -675,8 +835,16 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+window.addEventListener("scroll", syncStickySearchVisibility, { passive: true });
+
 renderPortalResults(portalSearchData.slice(0, 4));
 renderCalendar();
 renderFxChart();
 loadLiveFxChart();
+loadWeather();
+loadHolidays(portalCalendarCursor.getFullYear());
+updateClock();
+updateHeroMetrics();
+syncStickySearchVisibility();
+window.setInterval(updateClock, 1000);
 initDisqus();

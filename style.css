@@ -58,11 +58,15 @@ body::before {
 }
 
 .portal-topbar {
+  position: sticky;
+  top: 12px;
+  z-index: 24;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   padding: 16px 20px;
+  backdrop-filter: blur(16px);
 }
 
 .portal-top-actions {
@@ -120,6 +124,74 @@ body::before {
 
 .portal-contact-trigger:hover {
   background: #e7e7e7;
+}
+
+.portal-sticky-search {
+  position: sticky;
+  top: 92px;
+  z-index: 23;
+  margin-top: 12px;
+  padding: 12px 16px;
+  border: 1px solid rgba(36, 80, 111, 0.12);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 18px 34px rgba(24, 55, 81, 0.08);
+}
+
+.portal-sticky-search-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.portal-sticky-search-form input,
+.portal-sticky-search-form button {
+  min-height: 46px;
+  border-radius: 16px;
+}
+
+.portal-sticky-search-form input {
+  padding: 0 16px;
+  border: 1px solid #d7e0e8;
+  background: #fff;
+}
+
+.portal-sticky-search-form button {
+  padding: 0 18px;
+  border: 1px solid #bfcbd6;
+  background: #eef5fb;
+  font-weight: 700;
+}
+
+.portal-quick-panel {
+  position: fixed;
+  right: 18px;
+  bottom: 22px;
+  z-index: 26;
+  display: grid;
+  gap: 10px;
+}
+
+.portal-quick-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgba(36, 80, 111, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #17324a;
+  text-decoration: none;
+  font-weight: 700;
+  box-shadow: 0 18px 32px rgba(22, 51, 74, 0.12);
+  backdrop-filter: blur(16px);
+}
+
+.portal-quick-link.is-button {
+  font: inherit;
 }
 
 .portal-contact-modal {
@@ -288,6 +360,84 @@ body::before {
 
 .portal-hero {
   padding: 48px 36px 36px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(237, 247, 254, 0.95)),
+    radial-gradient(circle at top right, rgba(103, 166, 214, 0.14), transparent 28%);
+}
+
+#portal-services .portal-panel {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbfd 100%);
+}
+
+#portal-guides {
+  background: linear-gradient(180deg, #ffffff 0%, #fcfaf5 100%);
+}
+
+#portal-tools .portal-panel {
+  background: linear-gradient(180deg, #ffffff 0%, #f4f9fd 100%);
+}
+
+#portal-standards .portal-panel,
+.portal-trust-panel {
+  background: linear-gradient(180deg, #ffffff 0%, #f8f9fb 100%);
+}
+
+.portal-live-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.portal-live-card,
+.portal-mini-metric,
+.portal-feed-item {
+  padding: 16px 18px;
+  border: 1px solid #d9e3eb;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.portal-live-card span,
+.portal-mini-metric span {
+  display: block;
+  color: #6a7885;
+  font-size: 0.82rem;
+}
+
+.portal-live-card strong,
+.portal-mini-metric strong {
+  display: block;
+  margin-top: 6px;
+  color: #0f2e45;
+  font-size: 1.02rem;
+}
+
+.portal-mini-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.portal-live-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.portal-live-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: rgba(36, 80, 111, 0.08);
+  color: #24506f;
+  font-weight: 700;
+  font-size: 0.84rem;
 }
 
 .portal-label,
@@ -444,6 +594,19 @@ body::before {
   gap: 22px;
 }
 
+.portal-tools-grid {
+  grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.8fr);
+  align-items: start;
+}
+
+.portal-panel-primary-tool {
+  box-shadow: 0 24px 48px rgba(18, 67, 102, 0.12);
+}
+
+.portal-panel-secondary-tool {
+  margin-top: 24px;
+}
+
 .portal-panel {
   padding: 26px;
 }
@@ -505,7 +668,8 @@ body::before {
 .portal-article-grid,
 .portal-faq-list,
 .portal-trust-links,
-.portal-profile-list {
+.portal-profile-list,
+.portal-feed-list {
   display: grid;
   gap: 14px;
 }
@@ -517,11 +681,30 @@ body::before {
 .portal-article-card,
 .portal-faq-item,
 .portal-trust-link,
-.portal-profile-item {
+.portal-profile-item,
+.portal-feed-item {
   padding: 18px;
   border: 1px solid #dfdfdf;
   border-radius: 18px;
   background: #f8f8f8;
+}
+
+.portal-feed-grid {
+  grid-template-columns: 1.15fr 0.85fr;
+}
+
+.portal-feed-panel {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.portal-feed-item strong {
+  color: #111;
+}
+
+.portal-feed-item p {
+  margin: 8px 0 0;
+  color: #5f5f5f;
+  line-height: 1.7;
 }
 
 .portal-article-card h3,
@@ -622,6 +805,34 @@ body::before {
 .portal-calendar-day.is-selected {
   border-color: #3c7cb3;
   background: linear-gradient(180deg, #eef6fb 0%, #dcecf8 100%);
+}
+
+.portal-calendar-day.is-holiday {
+  border-color: rgba(219, 123, 34, 0.32);
+}
+
+.portal-calendar-day.has-note {
+  box-shadow: inset 0 0 0 1px rgba(29, 154, 108, 0.08);
+}
+
+.portal-calendar-markers {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.portal-calendar-marker {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+}
+
+.portal-calendar-marker.holiday {
+  background: #db7b22;
+}
+
+.portal-calendar-marker.note {
+  background: #1d9a6c;
 }
 
 .portal-calendar-detail {
@@ -788,6 +999,12 @@ body::before {
   color: #0f7b50;
 }
 
+.portal-trust-panel .portal-trust-link {
+  padding: 18px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff, #f5f8fb);
+}
+
 .portal-profile-item strong {
   display: block;
   margin-bottom: 8px;
@@ -898,8 +1115,16 @@ body::before {
   .portal-workspace,
   .portal-shortcuts,
   .portal-article-grid,
-  .portal-fx-summary {
+  .portal-fx-summary,
+  .portal-live-strip,
+  .portal-mini-metrics,
+  .portal-feed-grid,
+  .portal-tools-grid {
     grid-template-columns: 1fr;
+  }
+
+  .portal-panel-secondary-tool {
+    margin-top: 0;
   }
 }
 
@@ -970,6 +1195,23 @@ body::before {
 
   .portal-fx-yaxis {
     display: none;
+  }
+
+  .portal-sticky-search {
+    top: 8px;
+  }
+
+  .portal-sticky-search-form {
+    grid-template-columns: 1fr;
+  }
+
+  .portal-quick-panel {
+    right: 10px;
+    bottom: 14px;
+  }
+
+  .portal-quick-link {
+    min-width: 60px;
   }
 }
 
