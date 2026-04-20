@@ -142,6 +142,7 @@ const portalFxAxis = document.querySelector("#portal-fx-axis");
 const portalFxYAxis = document.querySelector("#portal-fx-yaxis");
 const portalFxSummary = document.querySelector("#portal-fx-summary");
 const portalFxNote = document.querySelector("#portal-fx-note");
+const portalFxTooltip = document.querySelector("#portal-fx-tooltip");
 const portalButtons = document.querySelectorAll("[data-portal-keyword]");
 const textWraps = document.querySelectorAll(".text-wrap");
 const portalContactTrigger = document.querySelector("#portal-contact-trigger");
@@ -181,6 +182,7 @@ let portalFxLabels = ["04/14", "04/15", "04/16", "04/17", "04/18", "04/19", "04/
 let portalCalendarCursor = new Date();
 let portalSelectedDateKey = "";
 let portalHolidayMap = new Map();
+let portalCalendarNotes = {};
 const portalDateNotes = {
   "04-07": "주간 정리",
   "04-15": "환율 점검",
@@ -303,7 +305,7 @@ function renderCalendar() {
     const isSelected = dateKey === selectedKey;
     const holidayName = portalHolidayMap.get(dateKey);
     const noteKey = `${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    const noteLabel = portalDateNotes[noteKey];
+    const noteLabel = portalCalendarNotes[dateKey] || portalDateNotes[noteKey];
     days.push(`
       <button type="button" class="portal-calendar-day${isToday ? " is-today" : ""}${isSelected ? " is-selected" : ""}${holidayName ? " is-holiday" : ""}${noteLabel ? " has-note" : ""}" data-calendar-date="${dateKey}">
         <span>${day}</span>
@@ -324,7 +326,8 @@ function renderCalendar() {
   const selectedDate = new Date(selectedYear, selectedMonth - 1, selectedDay);
   const isWeekend = selectedDate.getDay() === 0 || selectedDate.getDay() === 6;
   const selectedHoliday = portalHolidayMap.get(selectedKey);
-  const selectedNote = portalDateNotes[`${String(selectedMonth).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`];
+  const selectedDateKey = `${selectedYear}-${String(selectedMonth).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`;
+  const selectedNote = portalCalendarNotes[selectedDateKey] || portalDateNotes[`${String(selectedMonth).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`];
   portalCalendarDetailTitle.textContent = `${selectedYear}년 ${selectedMonth}월 ${selectedDay}일`;
   portalCalendarDetailCopy.textContent = `${weekdayNames[selectedDate.getDay()]}${isWeekend ? " · 주말" : " · 평일"}${selectedHoliday ? ` · 공휴일: ${selectedHoliday}` : ""}${selectedNote ? ` · 메모: ${selectedNote}` : " · 이 날짜 기준 일정이나 메모를 연결할 수 있습니다."}`;
 
@@ -338,6 +341,25 @@ function renderCalendar() {
       renderCalendar();
     });
   });
+
+  portalCalendarDetailCopy.onclick = () => {
+    const currentKey = portalSelectedDateKey;
+    if (!currentKey) {
+      return;
+    }
+    const currentValue = portalCalendarNotes[currentKey] ?? "";
+    const nextValue = window.prompt("이 날짜 메모를 입력하세요.", currentValue);
+    if (nextValue === null) {
+      return;
+    }
+    if (nextValue.trim()) {
+      portalCalendarNotes[currentKey] = nextValue.trim();
+    } else {
+      delete portalCalendarNotes[currentKey];
+    }
+    localStorage.setItem("portalCalendarNotes", JSON.stringify(portalCalendarNotes));
+    renderCalendar();
+  };
 }
 
 function buildFxLine(values, width, height, min, max) {
@@ -357,7 +379,7 @@ function buildFxDots(values, width, height, min, max, colorClass) {
     .map((value, index) => {
       const x = (index / (values.length - 1)) * width;
       const y = height - ((value - min) / range) * height;
-      return `<circle class="portal-fx-dot ${colorClass}" cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="4"></circle>`;
+      return `<circle class="portal-fx-dot ${colorClass}" data-series="${colorClass}" data-index="${index}" cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="4"></circle>`;
     })
     .join("");
 }
@@ -443,6 +465,34 @@ function renderFxChart() {
       `;
     })
     .join("");
+
+  bindFxTooltip();
+}
+
+function bindFxTooltip() {
+  if (!(portalFxTooltip instanceof HTMLElement) || !(portalFxChart instanceof HTMLElement)) {
+    return;
+  }
+
+  portalFxChart.querySelectorAll(".portal-fx-dot").forEach((dot) => {
+    dot.addEventListener("mouseenter", () => {
+      if (!(dot instanceof SVGCircleElement)) {
+        return;
+      }
+      const seriesKey = dot.dataset.series ?? "";
+      const pointIndex = Number(dot.dataset.index ?? 0);
+      const series = portalFxSeries.find((item) => item.key === seriesKey);
+      if (!series) {
+        return;
+      }
+      portalFxTooltip.hidden = false;
+      portalFxTooltip.textContent = `${series.label} · ${portalFxLabels[pointIndex]} · ${series.values[pointIndex].toFixed(1)}`;
+    });
+
+    dot.addEventListener("mouseleave", () => {
+      portalFxTooltip.hidden = true;
+    });
+  });
 }
 
 async function fetchFxSeries(base, label, colorClass, transform = (value) => value) {
@@ -600,6 +650,7 @@ function syncStickySearchVisibility() {
     return;
   }
   portalStickySearch.hidden = window.scrollY < 220;
+  portalStickySearch.classList.toggle("is-compact", window.scrollY > 420);
 }
 
 function renderPortalResults(items, query = "") {
@@ -739,6 +790,12 @@ textWraps.forEach((container, lineIndex) => {
     container.appendChild(span);
   });
 });
+
+try {
+  portalCalendarNotes = JSON.parse(localStorage.getItem("portalCalendarNotes") ?? "{}");
+} catch {
+  portalCalendarNotes = {};
+}
 
 if (portalContactForm && portalContactStatus) {
   portalContactForm.addEventListener("submit", async (event) => {

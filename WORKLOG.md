@@ -41,6 +41,29 @@
 - `style.css`
 - `WORKLOG.md`
 
+### 18:51 KST
+
+작업 요약
+- 환율 차트에 hover 툴팁을 추가했다.
+- 캘린더 날짜 메모를 localStorage에 저장할 수 있게 만들었다.
+- 상단 고정 검색 바가 스크롤 구간에 따라 compact 상태로 반응하도록 보강했다.
+
+세부 작업
+- `main.js`
+  - 차트 포인트 hover 툴팁 바인딩 추가
+  - 날짜별 메모 저장/복원 로직 추가
+  - 스티키 검색 바 compact 상태 토글 추가
+- `index.html`
+  - 환율 차트 툴팁 영역 추가
+- `style.css`
+  - compact 검색 바, 툴팁, 클릭형 메모 저장 스타일 추가
+
+수정 파일
+- `index.html`
+- `main.js`
+- `style.css`
+- `WORKLOG.md`
+
 ### 17:54 KST
 
 작업 요약

@@ -137,6 +137,13 @@ body::before {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(18px);
   box-shadow: 0 18px 34px rgba(24, 55, 81, 0.08);
+  transition: transform 180ms ease, padding 180ms ease, box-shadow 180ms ease;
+}
+
+.portal-sticky-search.is-compact {
+  padding: 10px 12px;
+  transform: scale(0.98);
+  box-shadow: 0 12px 22px rgba(24, 55, 81, 0.08);
 }
 
 .portal-sticky-search-form {
@@ -851,6 +858,7 @@ body::before {
   margin: 8px 0 0;
   color: #5d5d5d;
   line-height: 1.7;
+  cursor: pointer;
 }
 
 .portal-fx-legend {
@@ -950,6 +958,7 @@ body::before {
 .portal-fx-dot {
   fill: #fff;
   stroke-width: 3;
+  cursor: pointer;
 }
 
 .portal-fx-axis {
@@ -970,6 +979,20 @@ body::before {
   color: #5d5d5d;
   font-size: 0.88rem;
   line-height: 1.6;
+}
+
+.portal-fx-tooltip {
+  position: absolute;
+  right: 0;
+  margin-top: -6px;
+  padding: 10px 12px;
+  border: 1px solid #d7e0e8;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #17324a;
+  font-size: 0.84rem;
+  font-weight: 700;
+  box-shadow: 0 18px 30px rgba(20, 48, 69, 0.1);
 }
 
 .portal-fx-summary {
