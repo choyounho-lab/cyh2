@@ -539,6 +539,141 @@ body::before {
   line-height: 1.7;
 }
 
+.portal-calendar-widget,
+.portal-fx-widget {
+  display: grid;
+  gap: 16px;
+}
+
+.portal-calendar-header,
+.portal-fx-series-head,
+.portal-fx-legend,
+.portal-fx-axis {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.portal-calendar-header strong,
+.portal-fx-series-head strong {
+  color: #111;
+}
+
+.portal-calendar-header span,
+.portal-fx-series-head span {
+  color: #5f5f5f;
+  font-size: 0.9rem;
+}
+
+.portal-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.portal-calendar-weekdays span {
+  text-align: center;
+  color: #666;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.portal-calendar-day {
+  min-height: 58px;
+  padding: 10px;
+  border: 1px solid #dfdfdf;
+  border-radius: 16px;
+  background: #f8f8f8;
+}
+
+.portal-calendar-day span {
+  color: #111;
+  font-weight: 700;
+}
+
+.portal-calendar-day.is-empty {
+  border-style: dashed;
+  background: #fbfbfb;
+}
+
+.portal-calendar-day.is-today {
+  border-color: #8bb6d6;
+  background: #eef6fb;
+  box-shadow: inset 0 0 0 1px rgba(71, 129, 171, 0.14);
+}
+
+.portal-fx-legend {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.portal-fx-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid #dfdfdf;
+  border-radius: 999px;
+  background: #fafafa;
+}
+
+.portal-fx-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+.portal-fx-swatch.usd,
+.portal-fx-path.usd {
+  background: #2d7ff9;
+  stroke: #2d7ff9;
+}
+
+.portal-fx-swatch.jpy,
+.portal-fx-path.jpy {
+  background: #1d9a6c;
+  stroke: #1d9a6c;
+}
+
+.portal-fx-swatch.eur,
+.portal-fx-path.eur {
+  background: #db7b22;
+  stroke: #db7b22;
+}
+
+.portal-fx-chart {
+  display: grid;
+  gap: 12px;
+}
+
+.portal-fx-series-card {
+  padding: 16px;
+  border: 1px solid #dfdfdf;
+  border-radius: 18px;
+  background: #f8f8f8;
+}
+
+.portal-fx-svg {
+  width: 100%;
+  height: 180px;
+  margin-top: 12px;
+}
+
+.portal-fx-path {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.portal-fx-axis {
+  flex-wrap: wrap;
+  justify-content: space-between;
+  color: #666;
+  font-size: 0.82rem;
+}
+
 .portal-profile-item strong {
   display: block;
   margin-bottom: 8px;

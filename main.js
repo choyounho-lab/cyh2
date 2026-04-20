@@ -119,6 +119,11 @@ const portalProviderCopy = document.querySelector("#portal-provider-copy");
 const portalProviderButtons = document.querySelectorAll("[data-search-provider]");
 const portalResultsList = document.querySelector("#portal-results-list");
 const portalResultMeta = document.querySelector("#portal-result-meta");
+const portalCalendarTitle = document.querySelector("#portal-calendar-title");
+const portalCalendarSummary = document.querySelector("#portal-calendar-summary");
+const portalCalendarDays = document.querySelector("#portal-calendar-days");
+const portalFxChart = document.querySelector("#portal-fx-chart");
+const portalFxAxis = document.querySelector("#portal-fx-axis");
 const portalButtons = document.querySelectorAll("[data-portal-keyword]");
 const textWraps = document.querySelectorAll(".text-wrap");
 const portalContactTrigger = document.querySelector("#portal-contact-trigger");
@@ -132,6 +137,27 @@ const portalSearchProviders = {
   naver: "https://search.naver.com/search.naver?query=",
   google: "https://www.google.com/search?q=",
 };
+const portalFxSeries = [
+  {
+    key: "usd",
+    label: "USD/KRW",
+    colorClass: "usd",
+    values: [1348.2, 1351.4, 1349.8, 1354.1, 1350.5, 1346.9, 1344.3],
+  },
+  {
+    key: "jpy",
+    label: "JPY/KRW (100엔)",
+    colorClass: "jpy",
+    values: [948.1, 951.6, 949.9, 955.4, 953.2, 950.3, 947.5],
+  },
+  {
+    key: "eur",
+    label: "EUR/KRW",
+    colorClass: "eur",
+    values: [1462.5, 1468.2, 1465.7, 1472.9, 1469.6, 1464.8, 1460.4],
+  },
+];
+const portalFxLabels = ["04/14", "04/15", "04/16", "04/17", "04/18", "04/19", "04/20"];
 
 function openPortalContactModal() {
   if (!(portalContactModal instanceof HTMLElement)) {
@@ -195,6 +221,86 @@ function moveToSearchProvider(provider, query) {
   }
 
   window.location.href = `${baseUrl}${encodeURIComponent(normalizedQuery)}`;
+}
+
+function renderCalendar() {
+  if (
+    !(portalCalendarTitle instanceof HTMLElement) ||
+    !(portalCalendarSummary instanceof HTMLElement) ||
+    !(portalCalendarDays instanceof HTMLElement)
+  ) {
+    return;
+  }
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startWeekday = firstDay.getDay();
+  const totalDays = lastDay.getDate();
+  const days = [];
+
+  for (let i = 0; i < startWeekday; i += 1) {
+    days.push('<div class="portal-calendar-day is-empty" aria-hidden="true"></div>');
+  }
+
+  for (let day = 1; day <= totalDays; day += 1) {
+    const isToday = day === today.getDate();
+    days.push(`
+      <div class="portal-calendar-day${isToday ? " is-today" : ""}">
+        <span>${day}</span>
+      </div>
+    `);
+  }
+
+  portalCalendarTitle.textContent = `${year}년 ${month + 1}월`;
+  portalCalendarSummary.textContent = `${totalDays}일 구성, 오늘은 ${today.getDate()}일`;
+  portalCalendarDays.innerHTML = days.join("");
+}
+
+function buildFxLine(values, width, height, min, max) {
+  const range = max - min || 1;
+  return values
+    .map((value, index) => {
+      const x = (index / (values.length - 1)) * width;
+      const y = height - ((value - min) / range) * height;
+      return `${index === 0 ? "M" : "L"} ${x.toFixed(2)} ${y.toFixed(2)}`;
+    })
+    .join(" ");
+}
+
+function renderFxChart() {
+  if (!(portalFxChart instanceof HTMLElement) || !(portalFxAxis instanceof HTMLElement)) {
+    return;
+  }
+
+  const width = 320;
+  const height = 180;
+  const allValues = portalFxSeries.flatMap((series) => series.values);
+  const min = Math.min(...allValues);
+  const max = Math.max(...allValues);
+
+  portalFxChart.innerHTML = portalFxSeries
+    .map((series) => {
+      const path = buildFxLine(series.values, width, height, min, max);
+      const lastValue = series.values[series.values.length - 1].toFixed(1);
+
+      return `
+        <div class="portal-fx-series-card">
+          <div class="portal-fx-series-head">
+            <strong>${series.label}</strong>
+            <span>${lastValue}</span>
+          </div>
+          <svg viewBox="0 0 ${width} ${height}" class="portal-fx-svg" role="img" aria-label="${series.label} 최근 7일 추이">
+            <path class="portal-fx-path ${series.colorClass}" d="${path}" />
+          </svg>
+        </div>
+      `;
+    })
+    .join("");
+
+  portalFxAxis.innerHTML = portalFxLabels.map((label) => `<span>${label}</span>`).join("");
 }
 
 function renderPortalResults(items, query = "") {
@@ -404,4 +510,6 @@ document.addEventListener("keydown", (event) => {
 });
 
 renderPortalResults(portalSearchData.slice(0, 4));
+renderCalendar();
+renderFxChart();
 initDisqus();
