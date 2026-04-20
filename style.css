@@ -643,21 +643,51 @@ body::before {
 }
 
 .portal-fx-chart {
-  display: grid;
-  gap: 12px;
+  position: relative;
 }
 
-.portal-fx-series-card {
-  padding: 16px;
-  border: 1px solid #dfdfdf;
-  border-radius: 18px;
-  background: #f8f8f8;
+.portal-fx-board {
+  display: grid;
+  grid-template-columns: 60px minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
 }
 
 .portal-fx-svg {
   width: 100%;
-  height: 180px;
-  margin-top: 12px;
+  height: 240px;
+}
+
+.portal-fx-svg-main {
+  display: block;
+}
+
+.portal-fx-chart-wrap {
+  display: grid;
+  gap: 10px;
+}
+
+.portal-fx-yaxis {
+  display: grid;
+  align-content: space-between;
+  justify-items: end;
+  padding: 8px 0;
+  color: #666;
+  font-size: 0.82rem;
+}
+
+.portal-fx-grid-bg {
+  fill: #f8f8f8;
+}
+
+.portal-fx-grid-line {
+  stroke: #d8dde3;
+  stroke-width: 1;
+  stroke-dasharray: 4 6;
+}
+
+.portal-fx-grid-label {
+  display: none;
 }
 
 .portal-fx-path {
@@ -667,11 +697,49 @@ body::before {
   stroke-linejoin: round;
 }
 
+.portal-fx-dot {
+  fill: #fff;
+  stroke-width: 3;
+}
+
 .portal-fx-axis {
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   justify-content: space-between;
   color: #666;
   font-size: 0.82rem;
+  gap: 8px;
+}
+
+.portal-fx-axis span {
+  text-align: center;
+}
+
+.portal-fx-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.portal-fx-summary-card {
+  padding: 16px;
+  border: 1px solid #dfdfdf;
+  border-radius: 18px;
+  background: #f8f8f8;
+}
+
+.portal-fx-summary-change {
+  margin: 10px 0 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.portal-fx-summary-change.is-up {
+  color: #b25a20;
+}
+
+.portal-fx-summary-change.is-down {
+  color: #0f7b50;
 }
 
 .portal-profile-item strong {
@@ -783,7 +851,8 @@ body::before {
   .portal-results,
   .portal-workspace,
   .portal-shortcuts,
-  .portal-article-grid {
+  .portal-article-grid,
+  .portal-fx-summary {
     grid-template-columns: 1fr;
   }
 }
@@ -847,6 +916,14 @@ body::before {
 
   .portal-footer-nav {
     justify-content: flex-start;
+  }
+
+  .portal-fx-board {
+    grid-template-columns: 1fr;
+  }
+
+  .portal-fx-yaxis {
+    display: none;
   }
 }
 

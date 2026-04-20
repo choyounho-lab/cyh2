@@ -124,6 +124,8 @@ const portalCalendarSummary = document.querySelector("#portal-calendar-summary")
 const portalCalendarDays = document.querySelector("#portal-calendar-days");
 const portalFxChart = document.querySelector("#portal-fx-chart");
 const portalFxAxis = document.querySelector("#portal-fx-axis");
+const portalFxYAxis = document.querySelector("#portal-fx-yaxis");
+const portalFxSummary = document.querySelector("#portal-fx-summary");
 const portalButtons = document.querySelectorAll("[data-portal-keyword]");
 const textWraps = document.querySelectorAll(".text-wrap");
 const portalContactTrigger = document.querySelector("#portal-contact-trigger");
@@ -270,37 +272,97 @@ function buildFxLine(values, width, height, min, max) {
     .join(" ");
 }
 
+function buildFxDots(values, width, height, min, max, colorClass) {
+  const range = max - min || 1;
+  return values
+    .map((value, index) => {
+      const x = (index / (values.length - 1)) * width;
+      const y = height - ((value - min) / range) * height;
+      return `<circle class="portal-fx-dot ${colorClass}" cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="4"></circle>`;
+    })
+    .join("");
+}
+
 function renderFxChart() {
-  if (!(portalFxChart instanceof HTMLElement) || !(portalFxAxis instanceof HTMLElement)) {
+  if (
+    !(portalFxChart instanceof HTMLElement) ||
+    !(portalFxAxis instanceof HTMLElement) ||
+    !(portalFxYAxis instanceof HTMLElement) ||
+    !(portalFxSummary instanceof HTMLElement)
+  ) {
     return;
   }
 
-  const width = 320;
-  const height = 180;
+  const width = 640;
+  const height = 240;
   const allValues = portalFxSeries.flatMap((series) => series.values);
-  const min = Math.min(...allValues);
-  const max = Math.max(...allValues);
-
-  portalFxChart.innerHTML = portalFxSeries
-    .map((series) => {
-      const path = buildFxLine(series.values, width, height, min, max);
-      const lastValue = series.values[series.values.length - 1].toFixed(1);
-
+  const min = Math.min(...allValues) - 10;
+  const max = Math.max(...allValues) + 10;
+  const yTicks = 5;
+  const tickValues = Array.from({ length: yTicks }, (_, index) => {
+    const ratio = 1 - index / (yTicks - 1);
+    return min + (max - min) * ratio;
+  });
+  const gridLines = tickValues
+    .map((value, index) => {
+      const y = (height / (yTicks - 1)) * index;
       return `
-        <div class="portal-fx-series-card">
-          <div class="portal-fx-series-head">
-            <strong>${series.label}</strong>
-            <span>${lastValue}</span>
-          </div>
-          <svg viewBox="0 0 ${width} ${height}" class="portal-fx-svg" role="img" aria-label="${series.label} 최근 7일 추이">
-            <path class="portal-fx-path ${series.colorClass}" d="${path}" />
-          </svg>
-        </div>
+        <line class="portal-fx-grid-line" x1="0" y1="${y.toFixed(2)}" x2="${width}" y2="${y.toFixed(2)}"></line>
+        <text class="portal-fx-grid-label" x="8" y="${(y - 8).toFixed(2)}">${value.toFixed(0)}</text>
       `;
     })
     .join("");
 
+  const seriesSvg = portalFxSeries
+    .map((series) => {
+      const path = buildFxLine(series.values, width, height, min, max);
+      const dots = buildFxDots(series.values, width, height, min, max, series.colorClass);
+      return `
+        <g class="portal-fx-series ${series.colorClass}">
+          <path class="portal-fx-path ${series.colorClass}" d="${path}" />
+          ${dots}
+        </g>
+      `;
+    })
+    .join("");
+
+  portalFxChart.innerHTML = `
+    <svg viewBox="0 0 ${width} ${height}" class="portal-fx-svg portal-fx-svg-main" role="img" aria-label="최근 7일 주요 환율 추이">
+      <rect class="portal-fx-grid-bg" x="0" y="0" width="${width}" height="${height}" rx="18"></rect>
+      ${gridLines}
+      ${seriesSvg}
+    </svg>
+  `;
+
+  portalFxYAxis.innerHTML = tickValues
+    .map((series) => {
+      return `<span>${series.toFixed(0)}</span>`;
+    })
+    .join("");
+
   portalFxAxis.innerHTML = portalFxLabels.map((label) => `<span>${label}</span>`).join("");
+
+  portalFxSummary.innerHTML = portalFxSeries
+    .map((series) => {
+      const start = series.values[0];
+      const end = series.values[series.values.length - 1];
+      const diff = end - start;
+      const directionClass = diff <= 0 ? "is-down" : "is-up";
+      const directionLabel = diff <= 0 ? "하락" : "상승";
+
+      return `
+        <article class="portal-fx-summary-card">
+          <div class="portal-fx-series-head">
+            <strong>${series.label}</strong>
+            <span>${end.toFixed(1)}</span>
+          </div>
+          <p class="portal-fx-summary-change ${directionClass}">
+            최근 7일 ${directionLabel} ${Math.abs(diff).toFixed(1)}
+          </p>
+        </article>
+      `;
+    })
+    .join("");
 }
 
 function renderPortalResults(items, query = "") {
