@@ -78,10 +78,16 @@ const portalContactStatus = document.querySelector("#portal-contact-status");
 const portalCommentTrigger = document.querySelector("#portal-comment-trigger");
 const portalCommentThread = document.querySelector("#disqus_thread");
 const portalQuickContact = document.querySelector("#portal-quick-contact");
+const portalMapForm = document.querySelector("#portal-map-form");
+const portalMapInput = document.querySelector("#portal-map-input");
+const portalMapCanvas = document.querySelector("#portal-map-canvas");
+const portalMapPlaceholder = document.querySelector("#portal-map-placeholder");
+const portalMapResult = document.querySelector("#portal-map-result");
 const portalSearchProviders = {
   naver: "https://search.naver.com/search.naver?query=",
   google: "https://www.google.com/search?q=",
 };
+const naverMapKeyId = String(window.NAVER_MAP_KEY_ID || "").trim();
 const portalFxFallbackSeries = [
   {
     key: "usd",
@@ -108,6 +114,10 @@ let portalCalendarCursor = new Date();
 let portalSelectedDateKey = "";
 let portalHolidayMap = new Map();
 let portalCalendarNotes = {};
+let portalMap = null;
+let portalMapMarker = null;
+let portalMapInfoWindow = null;
+let portalMapScriptPromise = null;
 const portalDateNotes = {
   "04-07": "주간 정리",
   "04-15": "환율 점검",
@@ -131,6 +141,162 @@ function closePortalContactModal() {
 
   portalContactModal.hidden = true;
   document.body.classList.remove("portal-modal-open");
+}
+
+function setPortalMapStatus(title, message, type = "") {
+  if (!(portalMapResult instanceof HTMLElement)) {
+    return;
+  }
+
+  portalMapResult.className = `portal-map-result${type ? ` is-${type}` : ""}`;
+  portalMapResult.innerHTML = `<strong>${title}</strong><p>${message}</p>`;
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (char) => {
+    const entities = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+    return entities[char];
+  });
+}
+
+function loadNaverMapScript() {
+  if (window.naver?.maps?.Map && window.naver?.maps?.Service) {
+    return Promise.resolve();
+  }
+
+  if (!naverMapKeyId) {
+    return Promise.reject(new Error("네이버 지도 API 키가 필요합니다."));
+  }
+
+  if (portalMapScriptPromise) {
+    return portalMapScriptPromise;
+  }
+
+  portalMapScriptPromise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${encodeURIComponent(naverMapKeyId)}&submodules=geocoder`;
+    script.async = true;
+    script.onload = () => {
+      if (window.naver?.maps?.Service) {
+        resolve();
+        return;
+      }
+
+      const timeout = window.setTimeout(() => {
+        if (window.naver?.maps?.Service) {
+          resolve();
+          return;
+        }
+        reject(new Error("네이버 지도 Geocoder 모듈을 불러오지 못했습니다."));
+      }, 3000);
+
+      window.naver.maps.onJSContentLoaded = () => {
+        window.clearTimeout(timeout);
+        resolve();
+      };
+    };
+    script.onerror = () => reject(new Error("네이버 지도 스크립트를 불러오지 못했습니다."));
+    document.head.appendChild(script);
+  });
+
+  return portalMapScriptPromise;
+}
+
+async function initPortalMap() {
+  if (!(portalMapCanvas instanceof HTMLElement)) {
+    return false;
+  }
+
+  try {
+    await loadNaverMapScript();
+  } catch (error) {
+    setPortalMapStatus("지도 연결 필요", error instanceof Error ? error.message : "네이버 지도 API 키를 확인하세요.", "error");
+    return false;
+  }
+
+  if (portalMapPlaceholder instanceof HTMLElement) {
+    portalMapPlaceholder.hidden = true;
+  }
+
+  if (!portalMap) {
+    const center = new window.naver.maps.LatLng(37.5666103, 126.9783882);
+    portalMap = new window.naver.maps.Map(portalMapCanvas, {
+      center,
+      zoom: 13,
+      zoomControl: true,
+      zoomControlOptions: {
+        position: window.naver.maps.Position.TOP_RIGHT,
+      },
+    });
+    portalMapMarker = new window.naver.maps.Marker({
+      position: center,
+      map: portalMap,
+    });
+    portalMapInfoWindow = new window.naver.maps.InfoWindow({
+      content: '<div class="portal-map-info">서울 시청</div>',
+    });
+    portalMapInfoWindow.open(portalMap, portalMapMarker);
+  }
+
+  return true;
+}
+
+async function searchPortalPlace(query) {
+  const normalizedQuery = query.trim();
+
+  if (!normalizedQuery) {
+    setPortalMapStatus("검색어 필요", "찾을 장소나 주소를 입력하세요.", "error");
+    return;
+  }
+
+  setPortalMapStatus("검색 중", `"${normalizedQuery}" 위치를 찾고 있습니다.`);
+
+  const isReady = await initPortalMap();
+  if (!isReady || !window.naver?.maps?.Service) {
+    return;
+  }
+
+  window.naver.maps.Service.geocode({ query: normalizedQuery }, (status, response) => {
+    if (status !== window.naver.maps.Service.Status.OK) {
+      setPortalMapStatus("검색 실패", "네이버 지도 API 응답을 확인하지 못했습니다.", "error");
+      return;
+    }
+
+    const item = response?.v2?.addresses?.[0];
+
+    if (!item) {
+      const naverMapSearchUrl = `https://map.naver.com/p/search/${encodeURIComponent(normalizedQuery)}`;
+      const link = `<a href="${naverMapSearchUrl}" target="_blank" rel="noopener">네이버 지도에서 직접 보기</a>`;
+      setPortalMapStatus("결과 없음", `주소 좌표를 찾지 못했습니다. ${link}`, "error");
+      return;
+    }
+
+    const position = new window.naver.maps.LatLng(Number(item.y), Number(item.x));
+    const address = item.roadAddress || item.jibunAddress || normalizedQuery;
+
+    portalMap.setCenter(position);
+    portalMap.setZoom(16);
+
+    if (portalMapMarker) {
+      portalMapMarker.setPosition(position);
+      portalMapMarker.setMap(portalMap);
+    }
+
+    if (portalMapInfoWindow && portalMapMarker) {
+      portalMapInfoWindow.setContent(
+        `<div class="portal-map-info"><strong>${escapeHtml(normalizedQuery)}</strong><span>${escapeHtml(address)}</span></div>`
+      );
+      portalMapInfoWindow.open(portalMap, portalMapMarker);
+    }
+
+    setPortalMapStatus("검색 완료", `${escapeHtml(address)}<br />위도 ${escapeHtml(item.y)}, 경도 ${escapeHtml(item.x)}`, "success");
+  });
 }
 
 function initDisqus() {
@@ -822,6 +988,13 @@ if (portalCommentTrigger instanceof HTMLElement) {
   });
 }
 
+if (portalMapForm instanceof HTMLFormElement && portalMapInput instanceof HTMLInputElement) {
+  portalMapForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    searchPortalPlace(portalMapInput.value);
+  });
+}
+
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     closePortalContactModal();
@@ -840,4 +1013,5 @@ updateClock();
 updateHeroMetrics();
 syncStickySearchVisibility();
 window.setInterval(updateClock, 1000);
+initPortalMap();
 initDisqus();
