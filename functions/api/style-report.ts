@@ -1,33 +1,77 @@
+interface Env {
+  OPENAI_API_KEY?: string;
+  OPENAI_MODEL?: string;
+}
+
+interface StyleReportPayload {
+  height?: string | number;
+  weight?: string | number;
+  style?: string;
+  purpose?: string;
+  memo?: string;
+  photoDataUrl?: string;
+}
+
+interface OpenAITextContent {
+  type: "input_text";
+  text: string;
+}
+
+interface OpenAIImageContent {
+  type: "input_image";
+  image_url: string;
+  detail: "low" | "high" | "auto";
+}
+
+type OpenAIInputContent = OpenAITextContent | OpenAIImageContent;
+
+interface OpenAIOutputContent {
+  type?: string;
+  text?: string;
+}
+
+interface OpenAIOutputItem {
+  type?: string;
+  content?: OpenAIOutputContent[];
+}
+
+interface OpenAIResponseBody {
+  output_text?: string;
+  output?: OpenAIOutputItem[];
+}
+
+type PagesContext = EventContext<Env, string, unknown>;
+
 const jsonHeaders = {
   "Content-Type": "application/json; charset=utf-8",
 };
 
-function jsonResponse(body, status = 200) {
+function jsonResponse(body: Record<string, unknown>, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: jsonHeaders,
   });
 }
 
-function sanitizeText(value, maxLength = 600) {
+function sanitizeText(value: unknown, maxLength = 600): string {
   return String(value || "").trim().slice(0, maxLength);
 }
 
-function isValidImageDataUrl(value) {
+function isValidImageDataUrl(value: unknown): value is string {
   return /^data:image\/(png|jpe?g|webp);base64,[a-z0-9+/=\s]+$/i.test(String(value || ""));
 }
 
-function extractOutputText(data) {
-  if (typeof data?.output_text === "string" && data.output_text.trim()) {
+function extractOutputText(data: OpenAIResponseBody): string {
+  if (typeof data.output_text === "string" && data.output_text.trim()) {
     return data.output_text.trim();
   }
 
-  const message = data?.output?.find((item) => item.type === "message");
+  const message = data.output?.find((item) => item.type === "message");
   const text = message?.content?.find((item) => item.type === "output_text")?.text;
   return typeof text === "string" ? text.trim() : "";
 }
 
-export async function onRequestOptions() {
+export async function onRequestOptions(): Promise<Response> {
   return new Response(null, {
     status: 204,
     headers: {
@@ -38,17 +82,17 @@ export async function onRequestOptions() {
   });
 }
 
-export async function onRequestPost(context) {
+export async function onRequestPost(context: PagesContext): Promise<Response> {
   const { request, env } = context;
 
   if (!env.OPENAI_API_KEY) {
     return jsonResponse({ error: "OPENAI_API_KEY 환경 변수가 필요합니다." }, 500);
   }
 
-  let payload;
+  let payload: StyleReportPayload;
 
   try {
-    payload = await request.json();
+    payload = (await request.json()) as StyleReportPayload;
   } catch {
     return jsonResponse({ error: "요청 형식이 올바르지 않습니다." }, 400);
   }
@@ -64,7 +108,7 @@ export async function onRequestPost(context) {
     return jsonResponse({ error: "키와 몸무게 범위를 확인해주세요." }, 400);
   }
 
-  const content = [
+  const content: OpenAIInputContent[] = [
     {
       type: "input_text",
       text: [
@@ -128,7 +172,7 @@ export async function onRequestPost(context) {
     );
   }
 
-  const data = await response.json();
+  const data = (await response.json()) as OpenAIResponseBody;
   const report = extractOutputText(data);
 
   if (!report) {
