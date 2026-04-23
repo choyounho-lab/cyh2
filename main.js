@@ -149,11 +149,11 @@ function updateStylistSummary() {
   const style = String(formData.get("style") || "casual");
   const purpose = String(formData.get("purpose") || "daily");
   const styleLabels = {
-    casual: "캐주얼",
-    minimal: "미니멀",
-    street: "스트릿",
-    business: "비즈니스",
-    date: "데이트룩",
+    casual: "편한 캐주얼",
+    minimal: "깔끔한 미니멀",
+    street: "느긋한 스트릿",
+    business: "단정한 출근룩",
+    date: "따뜻한 데이트룩",
   };
   const purposeLabels = {
     daily: "데일리",
@@ -164,13 +164,13 @@ function updateStylistSummary() {
   };
 
   if (!height && !weight) {
-    portalStylistSummary.innerHTML = "<strong>입력 전</strong><p>키와 몸무게를 입력하면 체형 기준 스타일 프로필이 여기에 정리됩니다.</p>";
+    portalStylistSummary.innerHTML = "<strong>아직 비어 있는 스타일 노트</strong><p>키와 몸무게를 입력하면 어울리는 핏과 무드가 여기서 먼저 정리됩니다.</p>";
     return;
   }
 
   portalStylistSummary.innerHTML = `
-    <strong>스타일 프로필</strong>
-    <p>${height || "-"}cm / ${weight || "-"}kg 기준으로 ${styleLabels[style] || "캐주얼"} 스타일을 ${purposeLabels[purpose] || "데일리"} 용도에 맞춰 추천할 준비가 됐습니다.</p>
+    <strong>오늘의 스타일 노트</strong>
+    <p>${height || "-"}cm / ${weight || "-"}kg 기준으로 ${styleLabels[style] || "편한 캐주얼"} 무드를 ${purposeLabels[purpose] || "데일리"}에 맞춰 추천할 준비가 됐습니다.</p>
   `;
 }
 
@@ -884,7 +884,7 @@ if (portalStylistForm instanceof HTMLFormElement) {
     updateStylistSummary();
 
     if (portalStylistStatus instanceof HTMLElement) {
-      portalStylistStatus.textContent = "스타일 프로필이 임시 저장되었습니다.";
+      portalStylistStatus.textContent = "스타일 노트가 임시 저장되었습니다.";
       portalStylistStatus.classList.add("is-success");
     }
   });
