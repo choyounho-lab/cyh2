@@ -83,6 +83,8 @@ const portalStylistPhoto = document.querySelector("#portal-stylist-photo");
 const portalPhotoPreview = document.querySelector("#portal-photo-preview");
 const portalStylistSummary = document.querySelector("#portal-stylist-summary");
 const portalStylistStatus = document.querySelector("#portal-stylist-status");
+const portalStyleReport = document.querySelector("#portal-style-report");
+const portalStyleReportBody = document.querySelector("#portal-style-report-body");
 const portalSearchProviders = {
   naver: "https://search.naver.com/search.naver?query=",
   google: "https://www.google.com/search?q=",
@@ -186,6 +188,83 @@ function updateStylistPhotoPreview(file) {
 
   const imageUrl = URL.createObjectURL(file);
   portalPhotoPreview.innerHTML = `<img src="${imageUrl}" alt="업로드한 스타일 참고 사진 미리보기" />`;
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("사진을 읽지 못했습니다."));
+    reader.readAsDataURL(file);
+  });
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (char) => {
+    const entities = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+    return entities[char];
+  });
+}
+
+function renderStyleReport(report) {
+  if (!(portalStyleReport instanceof HTMLElement) || !(portalStyleReportBody instanceof HTMLElement)) {
+    return;
+  }
+
+  const paragraphs = String(report)
+    .trim()
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .filter(Boolean);
+
+  portalStyleReport.hidden = false;
+  portalStyleReportBody.innerHTML = paragraphs.map((block) => `<p>${escapeHtml(block).replace(/\n/g, "<br />")}</p>`).join("");
+}
+
+async function requestStyleReport() {
+  if (!(portalStylistForm instanceof HTMLFormElement)) {
+    return;
+  }
+
+  const formData = new FormData(portalStylistForm);
+  const photo = portalStylistPhoto instanceof HTMLInputElement ? portalStylistPhoto.files?.[0] : null;
+  let photoDataUrl = "";
+
+  if (photo instanceof File) {
+    if (photo.size > 3_500_000) {
+      throw new Error("사진 용량은 3.5MB 이하로 올려주세요.");
+    }
+    photoDataUrl = await readFileAsDataUrl(photo);
+  }
+
+  const response = await fetch("/api/style-report", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      height: formData.get("height"),
+      weight: formData.get("weight"),
+      style: formData.get("style"),
+      purpose: formData.get("purpose"),
+      memo: formData.get("memo"),
+      photoDataUrl,
+    }),
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.error || "스타일 보고서를 생성하지 못했습니다.");
+  }
+
+  renderStyleReport(data.report || "");
 }
 
 function initDisqus() {
@@ -879,13 +958,41 @@ if (portalCommentTrigger instanceof HTMLElement) {
 
 if (portalStylistForm instanceof HTMLFormElement) {
   portalStylistForm.addEventListener("input", updateStylistSummary);
-  portalStylistForm.addEventListener("submit", (event) => {
+  portalStylistForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     updateStylistSummary();
 
+    const submitButton = portalStylistForm.querySelector('button[type="submit"]');
+    const defaultLabel = submitButton?.textContent || "내 스타일 노트 저장";
+
     if (portalStylistStatus instanceof HTMLElement) {
-      portalStylistStatus.textContent = "스타일 노트가 임시 저장되었습니다.";
-      portalStylistStatus.classList.add("is-success");
+      portalStylistStatus.textContent = "AI 스타일 컨설팅 보고서를 만드는 중입니다...";
+      portalStylistStatus.className = "portal-stylist-status";
+    }
+
+    if (submitButton instanceof HTMLButtonElement) {
+      submitButton.disabled = true;
+      submitButton.textContent = "보고서 생성 중...";
+    }
+
+    try {
+      await requestStyleReport();
+
+      if (portalStylistStatus instanceof HTMLElement) {
+        portalStylistStatus.textContent = "스타일 컨설팅 보고서가 완성되었습니다.";
+        portalStylistStatus.classList.add("is-success");
+      }
+    } catch (error) {
+      if (portalStylistStatus instanceof HTMLElement) {
+        portalStylistStatus.textContent =
+          error instanceof Error ? error.message : "스타일 보고서를 생성하지 못했습니다.";
+        portalStylistStatus.classList.add("is-error");
+      }
+    } finally {
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = false;
+        submitButton.textContent = defaultLabel;
+      }
     }
   });
 }

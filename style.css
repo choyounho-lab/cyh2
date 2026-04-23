@@ -888,6 +888,12 @@ body::before {
   background: #563923;
 }
 
+.portal-stylist-form button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+  transform: none;
+}
+
 .portal-stylist-status {
   min-height: 22px;
   margin: 0;
@@ -896,6 +902,11 @@ body::before {
 
 .portal-stylist-status.is-success {
   color: #4d7a3a;
+  font-weight: 700;
+}
+
+.portal-stylist-status.is-error {
+  color: #b04a33;
   font-weight: 700;
 }
 
@@ -937,6 +948,26 @@ body::before {
   margin: 10px 0 0;
   color: #735a42;
   line-height: 1.7;
+}
+
+.portal-style-report {
+  padding: 18px;
+  border: 1px solid #c8af8e;
+  border-radius: 18px;
+  background: #fffaf2;
+  box-shadow: 0 16px 30px rgba(96, 69, 41, 0.08);
+}
+
+.portal-style-report strong {
+  display: block;
+  color: #3d2b1f;
+}
+
+.portal-style-report p {
+  margin: 14px 0 0;
+  color: #5f4734;
+  line-height: 1.75;
+  white-space: normal;
 }
 
 .portal-calendar-header,
