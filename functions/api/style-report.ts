@@ -32,6 +32,7 @@ interface OpenAIOutputContent {
 
 interface OpenAIOutputItem {
   type?: string;
+  text?: string;
   content?: OpenAIOutputContent[];
 }
 
@@ -66,9 +67,19 @@ function extractOutputText(data: OpenAIResponseBody): string {
     return data.output_text.trim();
   }
 
-  const message = data.output?.find((item) => item.type === "message");
-  const text = message?.content?.find((item) => item.type === "output_text")?.text;
-  return typeof text === "string" ? text.trim() : "";
+  const textParts =
+    data.output
+      ?.flatMap((item) => {
+        if (typeof item.text === "string") {
+          return item.text;
+        }
+
+        return item.content?.map((content) => content.text || "") || [];
+      })
+      .map((text) => text.trim())
+      .filter(Boolean) || [];
+
+  return textParts.join("\n\n").trim();
 }
 
 export async function onRequestOptions(): Promise<Response> {
@@ -158,6 +169,7 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
         },
       ],
       max_output_tokens: 1200,
+      store: false,
     }),
   });
 
@@ -176,7 +188,13 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
   const report = extractOutputText(data);
 
   if (!report) {
-    return jsonResponse({ error: "보고서 응답이 비어 있습니다." }, 502);
+    return jsonResponse(
+      {
+        error: "보고서 응답이 비어 있습니다.",
+        detail: JSON.stringify(data).slice(0, 800),
+      },
+      502
+    );
   }
 
   return jsonResponse({ report, model });

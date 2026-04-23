@@ -217,6 +217,12 @@ function renderStyleReport(report) {
     return;
   }
 
+  const normalizedReport = String(report || "").trim();
+
+  if (!normalizedReport) {
+    throw new Error("AI 응답은 도착했지만 보고서 텍스트가 비어 있습니다.");
+  }
+
   const paragraphs = String(report)
     .trim()
     .split(/\n{2,}/)
@@ -265,6 +271,15 @@ async function requestStyleReport() {
   }
 
   renderStyleReport(data.report || "");
+}
+
+function renderStyleReportError(message) {
+  if (!(portalStyleReport instanceof HTMLElement) || !(portalStyleReportBody instanceof HTMLElement)) {
+    return;
+  }
+
+  portalStyleReport.hidden = false;
+  portalStyleReportBody.innerHTML = `<p>${escapeHtml(message)}</p>`;
 }
 
 function initDisqus() {
@@ -983,9 +998,12 @@ if (portalStylistForm instanceof HTMLFormElement) {
         portalStylistStatus.classList.add("is-success");
       }
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "스타일 보고서를 생성하지 못했습니다.";
+
+      renderStyleReportError(errorMessage);
+
       if (portalStylistStatus instanceof HTMLElement) {
-        portalStylistStatus.textContent =
-          error instanceof Error ? error.message : "스타일 보고서를 생성하지 못했습니다.";
+        portalStylistStatus.textContent = errorMessage;
         portalStylistStatus.classList.add("is-error");
       }
     } finally {
