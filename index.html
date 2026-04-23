@@ -48,6 +48,7 @@
           <a href="#portal-services">서비스</a>
           <a href="#portal-guides">가이드</a>
           <a href="#portal-results">검색결과</a>
+          <a href="#portal-stylist">스타일리스트</a>
           <a href="#portal-standards">운영원칙</a>
           <a href="#portal-workspace">작업영역</a>
         </nav>
@@ -69,6 +70,7 @@
 
     <aside class="portal-quick-panel" aria-label="빠른 패널">
       <a href="#portal-search-form" class="portal-quick-link">검색</a>
+      <a href="#portal-stylist" class="portal-quick-link">스타일</a>
       <a href="#portal-tools" class="portal-quick-link">환율</a>
       <a href="#portal-calendar-title" class="portal-quick-link">날짜</a>
       <button type="button" class="portal-quick-link is-button" id="portal-quick-contact">문의</button>
@@ -364,29 +366,85 @@
         <div class="portal-results" id="portal-results-list"></div>
       </section>
 
-      <section class="portal-panel" id="portal-map-search" aria-label="네이버 지도 장소 검색">
+      <section class="portal-panel portal-stylist-panel" id="portal-stylist" aria-label="퍼스널 스타일리스트 서비스">
         <div class="portal-panel-head">
           <div>
-            <h2>장소 검색</h2>
-            <span>Naver Map</span>
+            <h2>퍼스널 스타일리스트</h2>
+            <span>Personal Stylist</span>
           </div>
-          <p class="portal-section-note">주소나 장소명을 입력하면 네이버 지도 위에 위치를 표시합니다.</p>
+          <p class="portal-section-note">키, 몸무게, 사진을 바탕으로 어울리는 스타일 제안을 준비하는 입력 화면입니다.</p>
         </div>
-        <form class="portal-map-form" id="portal-map-form" role="search">
-          <label class="portal-map-search-box" for="portal-map-input">
-            <span class="portal-sr-only">장소 또는 주소 입력</span>
-            <input id="portal-map-input" type="search" placeholder="예: 서울역, 강남역, 불정로 6" autocomplete="off" />
-            <button type="submit">지도 검색</button>
-          </label>
-        </form>
-        <div class="portal-map-layout">
-          <div class="portal-map-canvas" id="portal-map-canvas" aria-label="네이버 지도 표시 영역">
-            <div class="portal-map-placeholder" id="portal-map-placeholder">네이버 지도 API 키를 연결하면 지도가 표시됩니다.</div>
+
+        <div class="portal-stylist-tabs" role="tablist" aria-label="스타일리스트 단계">
+          <button type="button" class="portal-stylist-tab is-active" role="tab" aria-selected="true">프로필 입력</button>
+          <button type="button" class="portal-stylist-tab" role="tab" aria-selected="false">추천 준비</button>
+        </div>
+
+        <div class="portal-stylist-layout">
+          <form class="portal-stylist-form" id="portal-stylist-form">
+            <div class="portal-form-grid two-col">
+              <label>
+                <span>키</span>
+                <div class="portal-unit-input">
+                  <input type="number" name="height" min="120" max="230" placeholder="예: 175" inputmode="decimal" required />
+                  <strong>cm</strong>
+                </div>
+              </label>
+              <label>
+                <span>몸무게</span>
+                <div class="portal-unit-input">
+                  <input type="number" name="weight" min="30" max="200" placeholder="예: 70" inputmode="decimal" required />
+                  <strong>kg</strong>
+                </div>
+              </label>
+            </div>
+
+            <label>
+              <span>전신 또는 상반신 사진</span>
+              <input type="file" name="photo" id="portal-stylist-photo" accept="image/*" />
+            </label>
+
+            <div class="portal-form-grid two-col">
+              <label>
+                <span>원하는 스타일</span>
+                <select name="style">
+                  <option value="casual">캐주얼</option>
+                  <option value="minimal">미니멀</option>
+                  <option value="street">스트릿</option>
+                  <option value="business">비즈니스</option>
+                  <option value="date">데이트룩</option>
+                </select>
+              </label>
+              <label>
+                <span>주 사용 목적</span>
+                <select name="purpose">
+                  <option value="daily">데일리</option>
+                  <option value="work">출근</option>
+                  <option value="event">모임</option>
+                  <option value="travel">여행</option>
+                  <option value="shopping">쇼핑 참고</option>
+                </select>
+              </label>
+            </div>
+
+            <label>
+              <span>추가 메모</span>
+              <textarea name="memo" rows="4" placeholder="선호 색상, 피하고 싶은 핏, 자주 입는 옷 등을 적어주세요."></textarea>
+            </label>
+
+            <button type="submit">스타일 프로필 저장</button>
+            <p class="portal-stylist-status" id="portal-stylist-status" aria-live="polite"></p>
+          </form>
+
+          <div class="portal-stylist-preview" aria-label="스타일 프로필 미리보기">
+            <div class="portal-photo-preview" id="portal-photo-preview">
+              <span>사진 미리보기</span>
+            </div>
+            <div class="portal-stylist-summary" id="portal-stylist-summary">
+              <strong>입력 전</strong>
+              <p>키와 몸무게를 입력하면 체형 기준 스타일 프로필이 여기에 정리됩니다.</p>
+            </div>
           </div>
-          <aside class="portal-map-result" id="portal-map-result" aria-live="polite">
-            <strong>검색 대기 중</strong>
-            <p>주소나 장소명을 입력해 위치를 확인하세요.</p>
-          </aside>
         </div>
       </section>
 
@@ -599,9 +657,6 @@
     </footer>
   </div>
 
-  <script>
-    window.NAVER_MAP_KEY_ID = "";
-  </script>
   <script defer src="/main.js"></script>
 </body>
 </html>
