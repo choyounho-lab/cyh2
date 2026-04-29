@@ -24,16 +24,16 @@ const portalSearchData = [
     keywords: ["쇼핑", "상품", "추천", "구매"],
   },
   {
-    title: "지도 검색 서비스",
-    description: "장소, 주소, 이동 경로를 조회할 수 있는 지도 기능 자리입니다.",
-    category: "지도",
-    keywords: ["지도", "위치", "주소", "길찾기"],
+    title: "스타일 가이드 시작",
+    description: "체형과 무드 정보를 정리한 뒤 어떤 기준으로 코디를 고르면 좋은지 안내합니다.",
+    category: "스타일",
+    keywords: ["스타일", "코디", "무드", "체형"],
   },
   {
-    title: "빠른 메모 작성",
-    description: "즉시 메모를 남기고 후속 작업으로 연결하는 영역입니다.",
+    title: "검색 후 메모 습관",
+    description: "찾은 정보를 그냥 닫지 않고 메모로 남기면 다음 탐색이 더 짧아집니다.",
     category: "메모",
-    keywords: ["메모", "기록", "노트", "아이디어"],
+    keywords: ["메모", "기록", "노트", "정리"],
   },
 ];
 
@@ -75,8 +75,6 @@ const portalContactModal = document.querySelector("#portal-contact-modal");
 const portalContactClose = document.querySelector("#portal-contact-close");
 const portalContactForm = document.querySelector("#portal-contact-form");
 const portalContactStatus = document.querySelector("#portal-contact-status");
-const portalCommentTrigger = document.querySelector("#portal-comment-trigger");
-const portalCommentThread = document.querySelector("#disqus_thread");
 const portalQuickContact = document.querySelector("#portal-quick-contact");
 const portalStylistForm = document.querySelector("#portal-stylist-form");
 const portalStylistPhoto = document.querySelector("#portal-stylist-photo");
@@ -280,26 +278,6 @@ function renderStyleReportError(message) {
 
   portalStyleReport.hidden = false;
   portalStyleReportBody.innerHTML = `<p>${escapeHtml(message)}</p>`;
-}
-
-function initDisqus() {
-  if (!(portalCommentThread instanceof HTMLElement)) {
-    return;
-  }
-
-  window.disqus_config = function () {
-    this.page.url = window.location.href;
-    this.page.identifier = window.location.pathname || "/";
-  };
-
-  if (document.querySelector('script[src="https://cyhsearch0804.disqus.com/embed.js"]')) {
-    return;
-  }
-
-  const script = document.createElement("script");
-  script.src = "https://cyhsearch0804.disqus.com/embed.js";
-  script.setAttribute("data-timestamp", String(Date.now()));
-  (document.head || document.body).appendChild(script);
 }
 
 function hideProviderPicker() {
@@ -744,17 +722,17 @@ function renderPortalResults(items, query = "") {
   }
 
   if (items.length === 0) {
-    portalResultMeta.textContent = query ? `"${query}" 검색 결과 없음` : "검색 결과 없음";
+    portalResultMeta.textContent = query ? `"${query}" 관련 안내 없음` : "안내 목록 없음";
     portalResultsList.innerHTML = `
       <article class="portal-result-card portal-result-empty">
-        <strong>일치하는 결과가 없습니다.</strong>
-        <p>다른 키워드로 다시 검색하거나 추천 검색어를 눌러보세요.</p>
+        <strong>연결된 읽을거리를 찾지 못했습니다.</strong>
+        <p>다른 검색어로 다시 시도하거나 위 추천 키워드 중 하나를 눌러 안내 목록을 확인해보세요.</p>
       </article>
     `;
     return;
   }
 
-  portalResultMeta.textContent = query ? `"${query}" 검색 결과 ${items.length}건` : "기본 추천 결과";
+  portalResultMeta.textContent = query ? `"${query}" 관련 안내 ${items.length}건` : "기본 안내 목록";
   portalResultsList.innerHTML = items
     .map(
       (item) => `
@@ -961,16 +939,6 @@ if (portalContactModal instanceof HTMLElement) {
   });
 }
 
-if (portalCommentTrigger instanceof HTMLElement) {
-  portalCommentTrigger.addEventListener("click", () => {
-    const commentSection = document.querySelector("#portal-comments");
-
-    if (commentSection instanceof HTMLElement) {
-      commentSection.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  });
-}
-
 if (portalStylistForm instanceof HTMLFormElement) {
   portalStylistForm.addEventListener("input", updateStylistSummary);
   portalStylistForm.addEventListener("submit", async (event) => {
@@ -1039,4 +1007,3 @@ updateClock();
 updateHeroMetrics();
 syncStickySearchVisibility();
 window.setInterval(updateClock, 1000);
-initDisqus();
