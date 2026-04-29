@@ -742,6 +742,22 @@ body::before {
   line-height: 1.7;
 }
 
+.portal-article-card a,
+.portal-feed-item a,
+.portal-faq-item a,
+.portal-doc-panel a {
+  color: #173047;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.portal-article-card a:hover,
+.portal-feed-item a:hover,
+.portal-faq-item a:hover,
+.portal-doc-panel a:hover {
+  text-decoration: underline;
+}
+
 .portal-calendar-widget,
 .portal-fx-widget {
   display: grid;
