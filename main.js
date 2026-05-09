@@ -231,6 +231,95 @@ function renderStyleReport(report) {
   portalStyleReportBody.innerHTML = paragraphs.map((block) => `<p>${escapeHtml(block).replace(/\n/g, "<br />")}</p>`).join("");
 }
 
+function getStyleLabel(style) {
+  const styleLabels = {
+    casual: "편한 캐주얼",
+    minimal: "깔끔한 미니멀",
+    street: "느긋한 스트릿",
+    business: "단정한 출근룩",
+    date: "따뜻한 데이트룩",
+  };
+
+  return styleLabels[style] || "편한 캐주얼";
+}
+
+function getPurposeLabel(purpose) {
+  const purposeLabels = {
+    daily: "데일리",
+    work: "출근",
+    event: "모임",
+    travel: "여행",
+    shopping: "쇼핑 참고",
+  };
+
+  return purposeLabels[purpose] || "데일리";
+}
+
+function buildLocalStyleReport(input) {
+  const height = Number(input.height);
+  const weight = Number(input.weight);
+  const styleLabel = getStyleLabel(input.style);
+  const purposeLabel = getPurposeLabel(input.purpose);
+  const memo = String(input.memo || "").trim();
+  const silhouetteAdvice = [];
+  const outfitAdvice = [];
+  const finishingAdvice = [];
+
+  if (Number.isFinite(height) && height >= 178) {
+    silhouetteAdvice.push("세로선이 자연스럽게 살아나는 롱 셔츠, 스트레이트 팬츠, 가벼운 아우터가 잘 맞습니다.");
+  } else if (Number.isFinite(height) && height <= 168) {
+    silhouetteAdvice.push("상하의 경계를 분명하게 나누는 짧은 기장 상의와 발목이 보이는 팬츠가 전체 비율을 정리하기 좋습니다.");
+  } else {
+    silhouetteAdvice.push("너무 과장된 오버핏보다는 어깨선과 허리선이 적당히 잡힌 균형형 실루엣이 무난합니다.");
+  }
+
+  if (Number.isFinite(weight) && Number.isFinite(height) && height > 0) {
+    const bmi = weight / ((height / 100) * (height / 100));
+    if (bmi >= 25) {
+      silhouetteAdvice.push("두께감이 강한 겹침보다는 한 겹씩 떨어지는 원단과 짙은 하의 중심 구성이 더 깔끔하게 보입니다.");
+    } else if (bmi <= 19) {
+      silhouetteAdvice.push("너무 얇은 핏만 고르기보다 니트, 셔츠 재킷, 텍스처 있는 팬츠처럼 볼륨을 조금 보태는 구성이 안정적입니다.");
+    } else {
+      silhouetteAdvice.push("상하의 한쪽만 여유를 두는 방식으로 실루엣을 조절하면 부담 없이 정돈된 인상이 납니다.");
+    }
+  }
+
+  if (input.style === "minimal") {
+    outfitAdvice.push("색은 화이트, 네이비, 차콜, 블랙처럼 대비가 선명한 조합으로 줄이는 편이 좋습니다.");
+  } else if (input.style === "street") {
+    outfitAdvice.push("상의나 바지 한쪽에만 힘을 주고 나머지는 무채색으로 눌러야 스트릿 무드가 거칠지 않게 정리됩니다.");
+  } else if (input.style === "business") {
+    outfitAdvice.push("셔츠, 카라 니트, 슬랙스, 로퍼처럼 경계가 분명한 아이템 위주로 맞추면 출근용으로 안정적입니다.");
+  } else if (input.style === "date") {
+    outfitAdvice.push("부드러운 톤의 니트, 셔츠, 가벼운 외투 조합이 따뜻한 인상을 만들기 쉽습니다.");
+  } else {
+    outfitAdvice.push("티셔츠, 셔츠, 데님, 스니커즈처럼 익숙한 기본 아이템을 먼저 정리한 뒤 색 하나만 포인트로 주는 편이 안전합니다.");
+  }
+
+  if (input.purpose === "work") {
+    finishingAdvice.push("가방과 신발은 로고가 강하지 않은 단정한 형태를 고르면 전체 인상이 안정됩니다.");
+  } else if (input.purpose === "travel") {
+    finishingAdvice.push("장시간 이동을 생각해서 구김이 적고 신발이 편한 조합을 우선하는 편이 좋습니다.");
+  } else if (input.purpose === "event") {
+    finishingAdvice.push("과한 장식보다는 시계, 벨트, 가죽 신발처럼 작은 마감 요소를 맞추는 편이 더 세련됩니다.");
+  } else {
+    finishingAdvice.push("자주 입는 옷장 안에서 바로 조합 가능한 아이템 위주로 시작해야 실제 활용도가 높습니다.");
+  }
+
+  if (memo) {
+    finishingAdvice.push(`메모에 적은 내용("${memo.slice(0, 60)}${memo.length > 60 ? "..." : ""}")을 보면 취향을 크게 벗어나지 않는 안정적인 조합이 더 잘 맞습니다.`);
+  } else {
+    finishingAdvice.push("좋아하는 색과 피하고 싶은 핏을 한두 줄만 더 적어두면 다음 상담에서 제안 범위를 더 정확하게 좁힐 수 있습니다.");
+  }
+
+  return [
+    `${height || "-"}cm / ${weight || "-"}kg 기준으로 보면 이번 스타일 노트는 ${styleLabel} 무드를 ${purposeLabel} 상황에 맞게 정리하는 방향이 적절합니다.`,
+    silhouetteAdvice.join(" "),
+    outfitAdvice.join(" "),
+    finishingAdvice.join(" "),
+  ].join("\n\n");
+}
+
 async function requestStyleReport() {
   if (!(portalStylistForm instanceof HTMLFormElement)) {
     return;
@@ -247,28 +336,38 @@ async function requestStyleReport() {
     photoDataUrl = await readFileAsDataUrl(photo);
   }
 
-  const response = await fetch("/api/style-report", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      height: formData.get("height"),
-      weight: formData.get("weight"),
-      style: formData.get("style"),
-      purpose: formData.get("purpose"),
-      memo: formData.get("memo"),
-      photoDataUrl,
-    }),
-  });
+  const payload = {
+    height: formData.get("height"),
+    weight: formData.get("weight"),
+    style: String(formData.get("style") || "casual"),
+    purpose: String(formData.get("purpose") || "daily"),
+    memo: String(formData.get("memo") || ""),
+    photoDataUrl,
+  };
 
-  const data = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(data.error || "스타일 보고서를 생성하지 못했습니다.");
+  if (window.location.hostname.endsWith("github.io")) {
+    return buildLocalStyleReport(payload);
   }
 
-  renderStyleReport(data.report || "");
+  try {
+    const endpoint = new URL("./api/style-report", window.location.href);
+    const response = await fetch(endpoint.toString(), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json().catch(() => ({}));
+
+    if (response.ok && data.report) {
+      return data.report;
+    }
+  } catch (error) {
+    console.warn("style-report endpoint unavailable, using local report", error);
+  }
+
+  return buildLocalStyleReport(payload);
 }
 
 function renderStyleReportError(message) {
@@ -949,7 +1048,7 @@ if (portalStylistForm instanceof HTMLFormElement) {
     const defaultLabel = submitButton?.textContent || "내 스타일 노트 저장";
 
     if (portalStylistStatus instanceof HTMLElement) {
-      portalStylistStatus.textContent = "AI 스타일 컨설팅 보고서를 만드는 중입니다...";
+      portalStylistStatus.textContent = "스타일 컨설팅 보고서를 정리하는 중입니다...";
       portalStylistStatus.className = "portal-stylist-status";
     }
 
@@ -959,7 +1058,8 @@ if (portalStylistForm instanceof HTMLFormElement) {
     }
 
     try {
-      await requestStyleReport();
+      const report = await requestStyleReport();
+      renderStyleReport(report);
 
       if (portalStylistStatus instanceof HTMLElement) {
         portalStylistStatus.textContent = "스타일 컨설팅 보고서가 완성되었습니다.";
