@@ -1375,7 +1375,7 @@ body::before {
 
 .launchpad-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -1384,15 +1384,44 @@ body::before {
   display: grid;
   gap: 8px;
   align-content: end;
-  min-height: 140px;
+  min-height: 146px;
   padding: 18px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
-  background: #11151b;
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02) 22%, rgba(0, 0, 0, 0.12) 100%),
+    #11151b;
   color: #f5f7fa;
   text-align: left;
   cursor: pointer;
-  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -10px 20px rgba(0, 0, 0, 0.2),
+    0 14px 26px rgba(0, 0, 0, 0.22);
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease, filter 120ms ease;
+}
+
+.launchpad-pad::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+}
+
+.launchpad-pad::after {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 12px;
+  height: 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  filter: blur(8px);
+  pointer-events: none;
 }
 
 .launchpad-pad span {
@@ -1406,28 +1435,32 @@ body::before {
 }
 
 .launchpad-pad:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  filter: brightness(1.03);
 }
 
 .launchpad-pad.is-active {
-  transform: scale(0.98);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.08) inset;
+  transform: scale(0.985);
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.08),
+    inset 0 0 36px rgba(255, 255, 255, 0.08),
+    0 0 18px rgba(255, 255, 255, 0.08);
 }
 
 .launchpad-pad.is-kick {
-  background: linear-gradient(180deg, rgba(47, 107, 255, 0.28), rgba(17, 21, 27, 0.96));
+  background: linear-gradient(180deg, rgba(47, 107, 255, 0.46), rgba(17, 21, 27, 0.96));
 }
 
 .launchpad-pad.is-bass {
-  background: linear-gradient(180deg, rgba(15, 159, 110, 0.28), rgba(17, 21, 27, 0.96));
+  background: linear-gradient(180deg, rgba(15, 159, 110, 0.46), rgba(17, 21, 27, 0.96));
 }
 
 .launchpad-pad.is-lead {
-  background: linear-gradient(180deg, rgba(157, 92, 255, 0.28), rgba(17, 21, 27, 0.96));
+  background: linear-gradient(180deg, rgba(157, 92, 255, 0.46), rgba(17, 21, 27, 0.96));
 }
 
 .launchpad-pad.is-fx {
-  background: linear-gradient(180deg, rgba(255, 153, 54, 0.28), rgba(17, 21, 27, 0.96));
+  background: linear-gradient(180deg, rgba(255, 153, 54, 0.46), rgba(17, 21, 27, 0.96));
 }
 
 .launchpad-guide-grid {
@@ -1477,7 +1510,7 @@ body::before {
 
   .launchpad-meta,
   .launchpad-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -1519,7 +1552,7 @@ body::before {
 
   .launchpad-grid,
   .launchpad-meta {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .portal-panel {

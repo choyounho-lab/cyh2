@@ -3,21 +3,25 @@ const launchpadPads = document.querySelectorAll(".launchpad-pad");
 
 const launchpadConfig = {
   "1": { label: "Kick", type: "kick", color: "is-kick" },
-  "2": { label: "Bass", type: "bass", note: 55, color: "is-bass" },
+  "2": { label: "808", type: "glideBass", note: 55, color: "is-bass" },
   "3": { label: "Lead", type: "lead", note: 261.63, color: "is-lead" },
-  "4": { label: "FX", type: "fx", note: 780, color: "is-fx" },
+  "4": { label: "Vox", type: "vox", note: 440, color: "is-fx" },
+  "5": { label: "FX", type: "fx", note: 780, color: "is-fx" },
   q: { label: "Kick 2", type: "kick", color: "is-kick", pitch: 0.9 },
   w: { label: "Bass 2", type: "bass", note: 73.42, color: "is-bass" },
   e: { label: "Chord", type: "chord", notes: [261.63, 329.63, 392], color: "is-lead" },
   r: { label: "Rise", type: "rise", note: 320, color: "is-fx" },
+  t: { label: "Stab", type: "stab", notes: [293.66, 369.99, 440], color: "is-lead" },
   a: { label: "Snare", type: "snare", color: "is-kick" },
   s: { label: "Sub", type: "bass", note: 41.2, color: "is-bass" },
   d: { label: "Pluck", type: "pluck", note: 523.25, color: "is-lead" },
   f: { label: "Sweep", type: "rise", note: 500, color: "is-fx" },
+  g: { label: "Clap", type: "clap", color: "is-kick" },
   z: { label: "Hat", type: "hat", color: "is-kick" },
   x: { label: "Tom", type: "tom", note: 110, color: "is-bass" },
   c: { label: "Bell", type: "bell", note: 659.25, color: "is-lead" },
   v: { label: "Crash", type: "crash", color: "is-fx" },
+  b: { label: "Ride", type: "ride", color: "is-fx" },
 };
 
 let audioContext;
@@ -119,6 +123,77 @@ function playNoiseHit(context, filterType, frequency, duration, volume) {
   source.stop(now + duration);
 }
 
+function playClap(context) {
+  playNoiseHit(context, "bandpass", 1300, 0.09, 0.28);
+  window.setTimeout(() => playNoiseHit(context, "bandpass", 1500, 0.07, 0.22), 18);
+  window.setTimeout(() => playNoiseHit(context, "bandpass", 1700, 0.05, 0.16), 34);
+}
+
+function playRide(context) {
+  playNoiseHit(context, "highpass", 4200, 0.22, 0.14);
+  window.setTimeout(() => playTone(context, 1567.98, "triangle", 0.18, 0.06), 6);
+}
+
+function playVox(context, note) {
+  const now = context.currentTime;
+  const oscillatorA = context.createOscillator();
+  const oscillatorB = context.createOscillator();
+  const gainNode = context.createGain();
+  const filter = context.createBiquadFilter();
+
+  oscillatorA.type = "triangle";
+  oscillatorB.type = "sine";
+  oscillatorA.frequency.setValueAtTime(note, now);
+  oscillatorB.frequency.setValueAtTime(note * 1.5, now);
+  filter.type = "bandpass";
+  filter.frequency.setValueAtTime(note * 2.2, now);
+  filter.Q.value = 7;
+
+  gainNode.gain.setValueAtTime(0.0001, now);
+  gainNode.gain.exponentialRampToValueAtTime(0.18, now + 0.02);
+  gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
+
+  oscillatorA.connect(filter);
+  oscillatorB.connect(filter);
+  filter.connect(gainNode);
+  gainNode.connect(context.destination);
+
+  oscillatorA.start(now);
+  oscillatorB.start(now);
+  oscillatorA.stop(now + 0.44);
+  oscillatorB.stop(now + 0.44);
+}
+
+function playStab(context, notes) {
+  notes.forEach((note) => {
+    playTone(context, note, "sawtooth", 0.22, 0.13);
+  });
+}
+
+function playGlideBass(context, note) {
+  const now = context.currentTime;
+  const oscillator = context.createOscillator();
+  const gainNode = context.createGain();
+  const filter = context.createBiquadFilter();
+
+  oscillator.type = "square";
+  oscillator.frequency.setValueAtTime(note * 1.8, now);
+  oscillator.frequency.exponentialRampToValueAtTime(note, now + 0.12);
+  filter.type = "lowpass";
+  filter.frequency.setValueAtTime(320, now);
+
+  gainNode.gain.setValueAtTime(0.0001, now);
+  gainNode.gain.exponentialRampToValueAtTime(0.34, now + 0.01);
+  gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.55);
+
+  oscillator.connect(filter);
+  filter.connect(gainNode);
+  gainNode.connect(context.destination);
+
+  oscillator.start(now);
+  oscillator.stop(now + 0.58);
+}
+
 function playChord(context, notes) {
   notes.forEach((note, index) => {
     window.setTimeout(() => {
@@ -167,6 +242,9 @@ function triggerPad(key) {
     case "bass":
       playTone(context, config.note, "square", 0.42, 0.22);
       break;
+    case "glideBass":
+      playGlideBass(context, config.note);
+      break;
     case "lead":
       playTone(context, config.note, "sawtooth", 0.38, 0.16);
       break;
@@ -176,8 +254,17 @@ function triggerPad(key) {
     case "bell":
       playTone(context, config.note, "sine", 0.75, 0.14);
       break;
+    case "vox":
+      playVox(context, config.note);
+      break;
+    case "stab":
+      playStab(context, config.notes);
+      break;
     case "tom":
       playTone(context, config.note, "sine", 0.28, 0.2);
+      break;
+    case "clap":
+      playClap(context);
       break;
     case "snare":
       playNoiseHit(context, "highpass", 1800, 0.16, 0.26);
@@ -187,6 +274,9 @@ function triggerPad(key) {
       break;
     case "crash":
       playNoiseHit(context, "bandpass", 2800, 0.5, 0.18);
+      break;
+    case "ride":
+      playRide(context);
       break;
     case "chord":
       playChord(context, config.notes);
