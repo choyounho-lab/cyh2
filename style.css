@@ -623,6 +623,10 @@ body::before {
   text-align: left;
 }
 
+.portal-shortcut-link {
+  text-decoration: none;
+}
+
 .portal-summary {
   display: grid;
   gap: 14px;
@@ -1302,6 +1306,134 @@ body::before {
   line-height: 1.85;
 }
 
+.launchpad-body {
+  background: #0f1115;
+  color: #f5f7fa;
+}
+
+.launchpad-shell {
+  padding-bottom: 48px;
+}
+
+.launchpad-body .portal-topbar,
+.launchpad-body .portal-panel {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: #171b22;
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.22);
+}
+
+.launchpad-body .portal-brand,
+.launchpad-body .portal-panel-head h2,
+.launchpad-body .portal-panel h1,
+.launchpad-body .portal-nav a,
+.launchpad-body .portal-summary strong,
+.launchpad-body .portal-trust-link strong {
+  color: #f5f7fa;
+}
+
+.launchpad-body .portal-brand span,
+.launchpad-body .portal-panel-head span,
+.launchpad-body .portal-section-note,
+.launchpad-body .portal-summary span,
+.launchpad-body .portal-trust-link span {
+  color: #a7b0bd;
+}
+
+.launchpad-hero {
+  margin-top: 18px;
+}
+
+.launchpad-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.launchpad-meta-card {
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  background: #11151b;
+}
+
+.launchpad-meta-card span {
+  display: block;
+  color: #8f98a8;
+  font-size: 0.84rem;
+}
+
+.launchpad-meta-card strong {
+  display: block;
+  margin-top: 8px;
+  color: #f5f7fa;
+  font-size: 1rem;
+}
+
+.launchpad-panel {
+  padding: 24px;
+}
+
+.launchpad-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.launchpad-pad {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  align-content: end;
+  min-height: 140px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: #11151b;
+  color: #f5f7fa;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+
+.launchpad-pad span {
+  color: #9aa4b2;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.launchpad-pad strong {
+  font-size: 1.1rem;
+}
+
+.launchpad-pad:hover {
+  transform: translateY(-1px);
+}
+
+.launchpad-pad.is-active {
+  transform: scale(0.98);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.08) inset;
+}
+
+.launchpad-pad.is-kick {
+  background: linear-gradient(180deg, rgba(47, 107, 255, 0.28), rgba(17, 21, 27, 0.96));
+}
+
+.launchpad-pad.is-bass {
+  background: linear-gradient(180deg, rgba(15, 159, 110, 0.28), rgba(17, 21, 27, 0.96));
+}
+
+.launchpad-pad.is-lead {
+  background: linear-gradient(180deg, rgba(157, 92, 255, 0.28), rgba(17, 21, 27, 0.96));
+}
+
+.launchpad-pad.is-fx {
+  background: linear-gradient(180deg, rgba(255, 153, 54, 0.28), rgba(17, 21, 27, 0.96));
+}
+
+.launchpad-guide-grid {
+  margin-top: 18px;
+}
+
 .portal-results {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -1342,6 +1474,11 @@ body::before {
   .portal-panel-secondary-tool {
     margin-top: 0;
   }
+
+  .launchpad-meta,
+  .launchpad-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 720px) {
@@ -1378,6 +1515,11 @@ body::before {
 
   .portal-hero {
     padding: 32px 20px 24px;
+  }
+
+  .launchpad-grid,
+  .launchpad-meta {
+    grid-template-columns: 1fr;
   }
 
   .portal-panel {

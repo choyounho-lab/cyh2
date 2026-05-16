@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Launchpad | CYH Search</title>
+  <meta
+    name="description"
+    content="브라우저에서 바로 누르고 연주하는 CYH Launchpad입니다. 클릭과 키보드 입력 모두 지원합니다."
+  />
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-K3983SRBJQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-K3983SRBJQ");
+  </script>
+  <script type="text/javascript">
+    (function (c, l, a, r, i, t, y) {
+      c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); };
+      t = l.createElement(r);
+      t.async = 1;
+      t.src = "https://www.clarity.ms/tag/" + i;
+      y = l.getElementsByTagName(r)[0];
+      y.parentNode.insertBefore(t, y);
+    })(window, document, "clarity", "script", "we490lbbcm");
+  </script>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body class="launchpad-body">
+  <main class="portal-shell launchpad-shell">
+    <header class="portal-topbar">
+      <a class="portal-brand" href="./index.html">
+        <strong>CYH</strong>
+        <span>Launchpad</span>
+      </a>
+      <nav class="portal-nav">
+        <a href="./index.html">홈</a>
+        <a href="./guides.html">가이드</a>
+        <a href="#launchpad-grid">패드</a>
+      </nav>
+    </header>
+
+    <section class="portal-panel launchpad-hero">
+      <div class="portal-panel-head">
+        <div>
+          <h1>브라우저 런치패드</h1>
+          <span>Click or Keyboard</span>
+        </div>
+        <p class="portal-section-note">패드를 클릭하거나 맥북 키보드의 `1 2 3 4 / QWER / ASDF / ZXCV`를 눌러 바로 소리를 낼 수 있습니다.</p>
+      </div>
+      <div class="launchpad-meta">
+        <article class="launchpad-meta-card">
+          <span>입력 방식</span>
+          <strong>마우스 / 터치 / 키보드</strong>
+        </article>
+        <article class="launchpad-meta-card">
+          <span>키 배열</span>
+          <strong>1 2 3 4 · Q W E R · A S D F · Z X C V</strong>
+        </article>
+        <article class="launchpad-meta-card">
+          <span>상태</span>
+          <strong id="launchpad-status">아무 패드나 눌러 시작</strong>
+        </article>
+      </div>
+    </section>
+
+    <section class="portal-panel launchpad-panel" id="launchpad-grid" aria-label="런치패드">
+      <div class="launchpad-grid" id="launchpad-grid-panel">
+        <button type="button" class="launchpad-pad is-kick" data-key="1"><span>1</span><strong>Kick</strong></button>
+        <button type="button" class="launchpad-pad is-bass" data-key="2"><span>2</span><strong>Bass</strong></button>
+        <button type="button" class="launchpad-pad is-lead" data-key="3"><span>3</span><strong>Lead</strong></button>
+        <button type="button" class="launchpad-pad is-fx" data-key="4"><span>4</span><strong>FX</strong></button>
+
+        <button type="button" class="launchpad-pad is-kick" data-key="q"><span>Q</span><strong>Kick 2</strong></button>
+        <button type="button" class="launchpad-pad is-bass" data-key="w"><span>W</span><strong>Bass 2</strong></button>
+        <button type="button" class="launchpad-pad is-lead" data-key="e"><span>E</span><strong>Chord</strong></button>
+        <button type="button" class="launchpad-pad is-fx" data-key="r"><span>R</span><strong>Rise</strong></button>
+
+        <button type="button" class="launchpad-pad is-kick" data-key="a"><span>A</span><strong>Snare</strong></button>
+        <button type="button" class="launchpad-pad is-bass" data-key="s"><span>S</span><strong>Sub</strong></button>
+        <button type="button" class="launchpad-pad is-lead" data-key="d"><span>D</span><strong>Pluck</strong></button>
+        <button type="button" class="launchpad-pad is-fx" data-key="f"><span>F</span><strong>Sweep</strong></button>
+
+        <button type="button" class="launchpad-pad is-kick" data-key="z"><span>Z</span><strong>Hat</strong></button>
+        <button type="button" class="launchpad-pad is-bass" data-key="x"><span>X</span><strong>Tom</strong></button>
+        <button type="button" class="launchpad-pad is-lead" data-key="c"><span>C</span><strong>Bell</strong></button>
+        <button type="button" class="launchpad-pad is-fx" data-key="v"><span>V</span><strong>Crash</strong></button>
+      </div>
+    </section>
+
+    <section class="portal-grid launchpad-guide-grid">
+      <article class="portal-panel">
+        <div class="portal-panel-head">
+          <h2>사용 방법</h2>
+          <span>Controls</span>
+        </div>
+        <ul class="portal-summary">
+          <li>
+            <strong>패드 클릭</strong>
+            <span>각 패드를 누르면 즉시 사운드가 재생됩니다.</span>
+          </li>
+          <li>
+            <strong>맥북 키보드</strong>
+            <span>숫자 `1`부터 `4`, 그리고 `QWER`, `ASDF`, `ZXCV` 키에 각각 패드가 연결됩니다.</span>
+          </li>
+          <li>
+            <strong>빠른 반복</strong>
+            <span>같은 키를 연속으로 눌러도 중첩 재생되도록 만들었습니다.</span>
+          </li>
+        </ul>
+      </article>
+      <article class="portal-panel">
+        <div class="portal-panel-head">
+          <h2>연결 화면</h2>
+          <span>Navigation</span>
+        </div>
+        <div class="portal-trust-links">
+          <a class="portal-trust-link" href="./index.html">
+            <strong>메인으로 돌아가기</strong>
+            <span>검색과 포털 홈 화면으로 복귀합니다.</span>
+          </a>
+          <a class="portal-trust-link" href="./guides.html">
+            <strong>가이드 보기</strong>
+            <span>사이트 안의 자체 작성 가이드 페이지를 열 수 있습니다.</span>
+          </a>
+        </div>
+      </article>
+    </section>
+  </main>
+  <script defer src="./launchpad.js"></script>
+</body>
+</html>
