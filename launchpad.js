@@ -20,6 +20,25 @@ const launchpadConfig = {
   v: { label: "Crash", type: "crash", color: "is-fx" },
 };
 
+const launchpadCodeMap = {
+  Digit1: "1",
+  Digit2: "2",
+  Digit3: "3",
+  Digit4: "4",
+  KeyQ: "q",
+  KeyW: "w",
+  KeyE: "e",
+  KeyR: "r",
+  KeyA: "a",
+  KeyS: "s",
+  KeyD: "d",
+  KeyF: "f",
+  KeyZ: "z",
+  KeyX: "x",
+  KeyC: "c",
+  KeyV: "v",
+};
+
 let audioContext;
 
 function setLaunchpadStatus(message) {
@@ -226,7 +245,7 @@ window.addEventListener("keydown", (event) => {
     return;
   }
 
-  const key = event.key.toLowerCase();
+  const key = launchpadCodeMap[event.code] || event.key.toLowerCase();
   if (!launchpadConfig[key]) {
     return;
   }
