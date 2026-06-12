@@ -3,742 +3,227 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CYH Search</title>
+  <title>Developer Field Guide</title>
   <meta
     name="description"
-    content="CYH Search는 검색, 생산성, 정보 탐색 흐름을 정리하는 한국어 정보형 포털입니다. 운영 원칙, 콘텐츠 기준, 문의 채널, 정책 페이지를 함께 제공합니다."
+    content="개발자가 갖춰야 할 핵심 역량, 학습 로드맵, 실무 체크리스트, 면접 준비 기준을 한 화면에서 정리하는 개발자 정보 사이트입니다."
   />
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-K3983SRBJQ"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() {dataLayer.push(arguments);}
-    gtag("js", new Date());
-
-    gtag("config", "G-K3983SRBJQ");
-  </script>
-  <script type="text/javascript">
-    (function (c, l, a, r, i, t, y) {
-      c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); };
-      t = l.createElement(r);
-      t.async = 1;
-      t.src = "https://www.clarity.ms/tag/" + i;
-      y = l.getElementsByTagName(r)[0];
-      y.parentNode.insertBefore(t, y);
-    })(window, document, "clarity", "script", "we490lbbcm");
-  </script>
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <div class="portal-shell">
-    <header class="portal-topbar" aria-label="상단 내비게이션">
-      <a class="portal-brand" href="./index.html">
-        <strong>CYH</strong>
-        <span>Search Portal</span>
-      </a>
-      <div class="portal-top-actions">
-        <nav class="portal-nav">
-          <a href="#portal-services">서비스</a>
-          <a href="./guides.html">가이드</a>
-          <a href="./launchpad.html">런치패드</a>
-          <a href="#portal-results">읽을거리</a>
-          <a href="#portal-stylist">스타일리스트</a>
-          <a href="#portal-standards">운영원칙</a>
-          <a href="#portal-latest">최신글</a>
-        </nav>
-        <button type="button" class="portal-contact-trigger" id="portal-contact-trigger">제휴 문의</button>
-      </div>
-    </header>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Developer Field Guide 홈">
+      <span class="brand-mark">{ }</span>
+      <span>
+        <strong>Developer Field Guide</strong>
+        <small>실무형 개발자 정보 맵</small>
+      </span>
+    </a>
+    <nav class="top-nav" aria-label="주요 메뉴">
+      <a href="#roadmap">로드맵</a>
+      <a href="#skills">역량</a>
+      <a href="#checklist">체크리스트</a>
+      <a href="#interview">면접</a>
+    </nav>
+  </header>
 
-    <div class="portal-sticky-search" id="portal-sticky-search" hidden>
-      <form class="portal-sticky-search-form" id="portal-sticky-search-form" role="search">
-        <input
-          id="portal-sticky-search-input"
-          type="search"
-          placeholder="검색어를 입력하고 엔진을 선택하세요"
-          autocomplete="off"
-        />
-        <button type="submit">검색</button>
-      </form>
-    </div>
-
-    <aside class="portal-quick-panel" aria-label="빠른 패널">
-      <a href="#portal-search-form" class="portal-quick-link">검색</a>
-      <a href="./launchpad.html" class="portal-quick-link">패드</a>
-      <a href="#portal-stylist" class="portal-quick-link">스타일</a>
-      <a href="#portal-tools" class="portal-quick-link">환율</a>
-      <a href="#portal-calendar-title" class="portal-quick-link">날짜</a>
-      <button type="button" class="portal-quick-link is-button" id="portal-quick-contact">문의</button>
-    </aside>
-
-    <div class="portal-contact-modal" id="portal-contact-modal" hidden>
-      <div class="portal-contact-backdrop" data-contact-close></div>
-      <div class="portal-contact-dialog" role="dialog" aria-modal="true" aria-labelledby="portal-contact-title">
-        <div class="portal-contact-dialog-head">
-          <div class="portal-contact-head">
-            <strong id="portal-contact-title">제휴 문의</strong>
-            <span>Partnership</span>
-          </div>
-          <button type="button" class="portal-contact-close" id="portal-contact-close" aria-label="제휴 문의 닫기">닫기</button>
-        </div>
-
-        <form
-          class="portal-contact-form"
-          id="portal-contact-form"
-          action="https://formspree.io/f/mwvalkoq"
-          method="POST"
-        >
-          <input type="hidden" name="_subject" value="새 제휴 문의가 도착했습니다" />
-          <label>
-            <span class="portal-sr-only">이름</span>
-            <input type="text" name="name" placeholder="이름" autocomplete="name" required />
-          </label>
-          <label>
-            <span class="portal-sr-only">이메일</span>
-            <input type="email" name="email" placeholder="이메일" autocomplete="email" required />
-          </label>
-          <label>
-            <span class="portal-sr-only">문의 내용</span>
-            <textarea name="message" rows="4" placeholder="제휴 문의 내용을 남겨주세요." required></textarea>
-          </label>
-          <button type="submit">문의 보내기</button>
-          <p class="portal-contact-status" id="portal-contact-status" role="status" aria-live="polite"></p>
-        </form>
-      </div>
-    </div>
-
-    <main class="portal-main">
-      <section class="portal-hero" aria-label="검색 영역">
-        <div class="portal-live-strip">
-          <div class="portal-live-card">
-            <span>오늘 날짜</span>
-            <strong id="portal-live-date">2026년 4월 20일</strong>
-          </div>
-          <div class="portal-live-card">
-            <span>현재 시각</span>
-            <strong id="portal-live-time">18:00 KST</strong>
-          </div>
-          <div class="portal-live-card">
-            <span>서울 날씨</span>
-            <strong id="portal-live-weather">날씨 불러오는 중</strong>
-          </div>
-          <div class="portal-live-card">
-            <span>환율 요약</span>
-            <strong id="portal-live-fx">USD/KRW 확인 중</strong>
-          </div>
-        </div>
-        <p class="portal-label">Simple Search Start</p>
-        <h1 class="portal-hero-title">
-          <span class="text-wrap" data-text="찾고 싶은 내용을"></span>
-          <span class="text-wrap" data-text="바로 검색할 수 있는 시작 화면"></span>
-        </h1>
-        <p class="portal-copy">
-          CYH Search는 검색 시작 화면을 넘어서, 사용자가 자주 찾는 정보 흐름과 생산성 사용 패턴을 정리해 주는 안내형 포털을 목표로 합니다.
-          검색, 작업, 탐색, 정책 안내까지 한 화면에서 이해할 수 있도록 독립적인 설명 섹션과 운영 기준을 함께 제공합니다.
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">Developer Operating System</p>
+        <h1 id="hero-title">개발자가 갖춰야 할 정보를 한 곳에 정리합니다.</h1>
+        <p>
+          언어 문법만 외우는 페이지가 아니라, 실제로 일하는 개발자에게 필요한 문제 해결력, 협업 방식,
+          시스템 사고, 코드 품질 기준을 기준표처럼 볼 수 있게 구성했습니다.
         </p>
+        <div class="hero-actions">
+          <a class="primary-action" href="#roadmap">로드맵 보기</a>
+          <a class="secondary-action" href="#checklist">오늘 점검하기</a>
+        </div>
+      </div>
 
-        <form class="portal-search-form" id="portal-search-form" role="search">
-          <label class="portal-search-box" for="portal-search-input">
-            <span class="portal-sr-only">검색어 입력</span>
-            <input
-              id="portal-search-input"
-              name="query"
-              type="search"
-              placeholder="예: 뉴스, 일정, 메일, 쇼핑, 지도"
-              autocomplete="off"
-            />
-            <button type="submit">검색</button>
+      <div class="hero-board" aria-label="개발자 성장 지표">
+        <div class="terminal-window">
+          <div class="terminal-bar">
+            <span></span><span></span><span></span>
+          </div>
+          <pre><code>const developer = {
+  basics: ["language", "network", "database"],
+  habits: ["read code", "write tests", "ship small"],
+  mindset: "debug with evidence"
+};</code></pre>
+        </div>
+        <div class="signal-grid">
+          <article>
+            <span>핵심 분야</span>
+            <strong>6</strong>
+          </article>
+          <article>
+            <span>실무 습관</span>
+            <strong>12</strong>
+          </article>
+          <article>
+            <span>면접 기준</span>
+            <strong>18</strong>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-band" id="roadmap" aria-labelledby="roadmap-title">
+      <div class="section-head">
+        <p class="eyebrow">Roadmap</p>
+        <h2 id="roadmap-title">처음부터 실무까지 가는 순서</h2>
+        <p>아래 순서는 프론트엔드, 백엔드, 앱, 데이터 분야 모두에 공통으로 필요한 기반을 먼저 쌓도록 설계했습니다.</p>
+      </div>
+
+      <div class="roadmap">
+        <article class="roadmap-step">
+          <span>01</span>
+          <h3>컴퓨터 기본기</h3>
+          <p>자료구조, 알고리즘, 운영체제, 네트워크, HTTP, 프로세스와 스레드 개념을 말로 설명할 수 있어야 합니다.</p>
+        </article>
+        <article class="roadmap-step">
+          <span>02</span>
+          <h3>언어와 런타임</h3>
+          <p>주력 언어의 타입, 메모리, 비동기 처리, 에러 처리, 패키지 생태계를 작은 프로젝트로 검증합니다.</p>
+        </article>
+        <article class="roadmap-step">
+          <span>03</span>
+          <h3>웹과 데이터</h3>
+          <p>브라우저, API, 인증, SQL, 인덱스, 캐시, 배포 환경을 연결해 하나의 서비스 흐름으로 이해합니다.</p>
+        </article>
+        <article class="roadmap-step">
+          <span>04</span>
+          <h3>품질과 운영</h3>
+          <p>테스트, 로깅, 모니터링, 장애 대응, 코드 리뷰 기준을 익혀 만든 기능이 운영 가능한 상태인지 판단합니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-band muted" id="skills" aria-labelledby="skills-title">
+      <div class="section-head">
+        <p class="eyebrow">Skills</p>
+        <h2 id="skills-title">개발자가 갖춰야 하는 역량</h2>
+        <p>기술 스택보다 오래가는 역량을 중심으로 분류했습니다. 검색으로 필요한 항목만 빠르게 좁혀볼 수 있습니다.</p>
+      </div>
+
+      <div class="skill-toolbar">
+        <label for="skill-search">역량 검색</label>
+        <input id="skill-search" type="search" placeholder="예: 테스트, 네트워크, 협업" autocomplete="off" />
+      </div>
+
+      <div class="skill-grid" id="skill-grid">
+        <article class="skill-card" data-keywords="문제 해결 디버깅 로그 원인 분석">
+          <div class="skill-icon">01</div>
+          <h3>문제 해결력</h3>
+          <p>현상을 재현하고, 가설을 세우고, 로그와 데이터로 원인을 좁히는 능력입니다.</p>
+        </article>
+        <article class="skill-card" data-keywords="코드 품질 리팩터링 테스트 유지보수">
+          <div class="skill-icon">02</div>
+          <h3>코드 품질</h3>
+          <p>읽기 쉬운 이름, 작은 함수, 명확한 책임, 테스트 가능한 구조로 변경 비용을 낮춥니다.</p>
+        </article>
+        <article class="skill-card" data-keywords="시스템 설계 아키텍처 확장성 장애">
+          <div class="skill-icon">03</div>
+          <h3>시스템 사고</h3>
+          <p>요청이 들어와 저장되고 응답되는 전체 경로에서 병목과 실패 지점을 예상합니다.</p>
+        </article>
+        <article class="skill-card" data-keywords="데이터베이스 sql 인덱스 트랜잭션 캐시">
+          <div class="skill-icon">04</div>
+          <h3>데이터 감각</h3>
+          <p>스키마, 인덱스, 트랜잭션, 정합성, 캐시 무효화를 서비스 요구사항과 연결합니다.</p>
+        </article>
+        <article class="skill-card" data-keywords="협업 문서화 커뮤니케이션 코드 리뷰">
+          <div class="skill-icon">05</div>
+          <h3>협업 능력</h3>
+          <p>결정 배경을 문서화하고, 리뷰 가능한 단위로 작업하며, 모호한 요구사항을 질문으로 정리합니다.</p>
+        </article>
+        <article class="skill-card" data-keywords="보안 인증 권한 개인정보 취약점">
+          <div class="skill-icon">06</div>
+          <h3>보안 기본기</h3>
+          <p>인증과 인가, 입력 검증, 비밀 값 관리, 개인정보 처리 기준을 기본 설계에 포함합니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-band" id="checklist" aria-labelledby="checklist-title">
+      <div class="section-head">
+        <p class="eyebrow">Daily Checklist</p>
+        <h2 id="checklist-title">오늘의 개발자 점검표</h2>
+        <p>체크 상태는 이 브라우저에 저장됩니다. 공부나 프로젝트 진행 전에 기준을 빠르게 맞추는 용도입니다.</p>
+      </div>
+
+      <div class="checklist-layout">
+        <div class="progress-panel">
+          <span>완료율</span>
+          <strong id="progress-value">0%</strong>
+          <div class="progress-track" aria-hidden="true">
+            <div id="progress-bar"></div>
+          </div>
+          <p id="progress-copy">아직 완료된 항목이 없습니다.</p>
+          <button type="button" id="reset-checklist">초기화</button>
+        </div>
+
+        <form class="checklist" id="developer-checklist">
+          <label>
+            <input type="checkbox" name="read" />
+            <span>오늘 읽은 코드에서 배울 만한 패턴을 하나 적었다.</span>
+          </label>
+          <label>
+            <input type="checkbox" name="test" />
+            <span>새로 만든 기능이나 수정한 버그에 검증 방법을 남겼다.</span>
+          </label>
+          <label>
+            <input type="checkbox" name="commit" />
+            <span>커밋 단위를 작게 유지하고 변경 이유를 설명할 수 있다.</span>
+          </label>
+          <label>
+            <input type="checkbox" name="docs" />
+            <span>다음 사람이 봐야 할 결정 사항을 문서나 이슈에 남겼다.</span>
+          </label>
+          <label>
+            <input type="checkbox" name="review" />
+            <span>성능, 보안, 예외 상황을 한 번 더 점검했다.</span>
           </label>
         </form>
-
-        <div class="portal-provider-picker" id="portal-provider-picker" hidden aria-live="polite">
-          <p class="portal-provider-copy" id="portal-provider-copy">검색어를 입력하면 이동할 검색엔진을 고를 수 있습니다.</p>
-          <div class="portal-provider-actions">
-            <button type="button" class="portal-provider-button" data-search-provider="naver">네이버에서 검색</button>
-            <button type="button" class="portal-provider-button" data-search-provider="google">구글에서 검색</button>
-          </div>
-        </div>
-
-        <div class="portal-mini-metrics">
-          <article class="portal-mini-metric">
-            <span>오늘 달러</span>
-            <strong id="portal-mini-usd">-</strong>
-          </article>
-          <article class="portal-mini-metric">
-            <span>오늘 유로</span>
-            <strong id="portal-mini-eur">-</strong>
-          </article>
-          <article class="portal-mini-metric">
-            <span>100엔 기준</span>
-            <strong id="portal-mini-jpy">-</strong>
-          </article>
-          <article class="portal-mini-metric">
-            <span>이번 달 남은 일수</span>
-            <strong id="portal-mini-month-left">-</strong>
-          </article>
-        </div>
-
-        <div class="portal-keyword-row" aria-label="추천 검색어">
-          <button type="button" class="portal-chip" data-portal-keyword="오늘 일정">오늘 일정</button>
-          <button type="button" class="portal-chip" data-portal-keyword="실시간 뉴스">실시간 뉴스</button>
-          <button type="button" class="portal-chip" data-portal-keyword="메일 확인">메일 확인</button>
-          <button type="button" class="portal-chip" data-portal-keyword="쇼핑 추천">쇼핑 추천</button>
-          <button type="button" class="portal-chip" data-portal-keyword="스타일 가이드">스타일 가이드</button>
-        </div>
-
-        <div class="portal-live-badges">
-          <span class="portal-live-badge">검색 시작 화면 정리</span>
-          <span class="portal-live-badge">서울 날씨 한 줄 요약</span>
-          <span class="portal-live-badge">최근 7일 환율 추적</span>
-          <span class="portal-live-badge">월별 캘린더 인터랙션</span>
-        </div>
-      </section>
-
-      <section class="portal-grid" id="portal-services" aria-label="서비스 영역">
-        <article class="portal-panel">
-          <div class="portal-panel-head">
-            <h2>빠른 서비스</h2>
-            <span>Quick Links</span>
-          </div>
-          <div class="portal-shortcuts">
-            <button type="button" class="portal-shortcut" data-portal-keyword="메일 확인">
-              <strong>메일</strong>
-              <span>받은편지함 보기</span>
-            </button>
-            <button type="button" class="portal-shortcut" data-portal-keyword="캘린더 일정">
-              <strong>캘린더</strong>
-              <span>일정 정리</span>
-            </button>
-            <button type="button" class="portal-shortcut" data-portal-keyword="뉴스 브리핑">
-              <strong>뉴스</strong>
-              <span>오늘의 헤드라인</span>
-            </button>
-            <button type="button" class="portal-shortcut" data-portal-keyword="쇼핑 추천">
-              <strong>쇼핑</strong>
-              <span>추천 상품 보기</span>
-            </button>
-            <button type="button" class="portal-shortcut" data-portal-keyword="스타일 가이드">
-              <strong>스타일</strong>
-              <span>코디 상담 보기</span>
-            </button>
-            <a href="./launchpad.html" class="portal-shortcut portal-shortcut-link">
-              <strong>런치패드</strong>
-              <span>클릭과 키보드로 연주</span>
-            </a>
-          </div>
-        </article>
-
-        <article class="portal-panel">
-          <div class="portal-panel-head">
-            <h2>오늘의 요약</h2>
-            <span>Overview</span>
-          </div>
-          <ul class="portal-summary">
-            <li>
-              <strong>검색 모듈</strong>
-              <span>키워드 기반 필터 결과 제공</span>
-            </li>
-            <li>
-              <strong>실사용 정보 중심</strong>
-              <span>짧은 가이드, 일정 감각, 환율 흐름처럼 바로 읽히는 정보부터 정리합니다.</span>
-            </li>
-            <li>
-              <strong>가독성 우선 구성</strong>
-              <span>검색과 읽기를 방해하지 않도록 단순한 화면 구조와 명확한 안내 문구를 유지합니다.</span>
-            </li>
-          </ul>
-        </article>
-      </section>
-
-      <section class="portal-panel" id="portal-guides" aria-label="핵심 가이드">
-        <div class="portal-panel-head">
-          <div>
-            <h2>핵심 가이드</h2>
-            <span>Original Guides</span>
-          </div>
-          <p class="portal-section-note">실제 사용 흐름을 기준으로 정리한 자체 작성 콘텐츠입니다.</p>
-        </div>
-        <div class="portal-article-grid">
-          <article class="portal-article-card">
-            <span class="portal-result-category">검색 설계</span>
-            <h3>좋은 검색 시작 페이지는 무엇을 줄여야 하는가</h3>
-            <p>좋은 포털은 기능을 무작정 늘리기보다 사용자가 첫 10초 안에 할 일을 결정하도록 돕는다. 입력창, 추천 키워드, 최근 흐름, 명확한 이동 구조가 우선이다.</p>
-            <p><a href="./search-start-page-guide.html">자세히 읽기</a></p>
-          </article>
-          <article class="portal-article-card">
-            <span class="portal-result-category">생산성</span>
-            <h3>메일, 일정, 메모를 한 화면에 놓을 때 생기는 장점</h3>
-            <p>사용자는 검색만 하는 것이 아니라 다음 행동까지 이어 간다. 메일 확인, 일정 정리, 빠른 메모 작성 같은 후속 행동이 가까이 있으면 이탈이 줄어든다.</p>
-            <p><a href="./mail-calendar-memo-workflow.html">자세히 읽기</a></p>
-          </article>
-          <article class="portal-article-card">
-            <span class="portal-result-category">탐색</span>
-            <h3>탐색 구조가 복잡할수록 정보의 신뢰도는 낮아진다</h3>
-            <p>복잡한 메뉴, 중복 링크, 비어 있는 섹션은 사용자를 혼란스럽게 만든다. 명확한 메뉴와 목적별 구획은 정보 이해도와 체류 품질을 함께 높인다.</p>
-            <p><a href="./simple-navigation-trust.html">자세히 읽기</a></p>
-          </article>
-          <article class="portal-article-card">
-            <span class="portal-result-category">콘텐츠</span>
-            <h3>짧은 문장보다 중요한 것은 문장의 목적이다</h3>
-            <p>콘텐츠 길이보다 중요한 것은 왜 존재하는지가 드러나는가이다. 이 사이트의 각 섹션은 기능 소개가 아니라 사용자가 무엇을 얻는지 설명하는 방식으로 작성한다.</p>
-            <p><a href="./writing-clear-helpful-pages.html">자세히 읽기</a></p>
-          </article>
-          <article class="portal-article-card">
-            <span class="portal-result-category">운영</span>
-            <h3>운영 원칙과 문의 채널을 공개하는 이유</h3>
-            <p>정보형 사이트는 누가 어떤 기준으로 운영하는지 보여 줄 때 신뢰를 얻는다. 정책 페이지, 문의 폼, 서비스 목적 설명은 단순 부가 요소가 아니라 핵심 구조다.</p>
-            <p><a href="./about.html">운영 소개 읽기</a></p>
-          </article>
-          <article class="portal-article-card">
-            <span class="portal-result-category">광고</span>
-            <h3>광고보다 콘텐츠가 먼저여야 하는 이유</h3>
-            <p>광고 수익화는 콘텐츠 위에 올라가는 보조 수단이어야 한다. 본문보다 눈에 띄는 광고 배치나 비어 있는 페이지의 광고는 장기적인 신뢰에 불리하다.</p>
-            <p><a href="./ad-content-priority.html">자세히 읽기</a></p>
-          </article>
-        </div>
-      </section>
-
-      <section class="portal-panel" id="portal-latest" aria-label="최신 글">
-        <div class="portal-panel-head">
-          <div>
-            <h2>최신 글</h2>
-            <span>Latest Articles</span>
-          </div>
-          <p class="portal-section-note">최근 추가한 가이드와 체크리스트를 한곳에서 바로 확인할 수 있습니다.</p>
-        </div>
-        <div class="portal-article-grid">
-          <article class="portal-article-card">
-            <span class="portal-result-category">색인</span>
-            <h3>Search Console 제출 전 체크리스트</h3>
-            <p>사이트맵, robots.txt, 내부 링크, 정책 문서 일치 여부를 제출 전에 점검하는 기준입니다.</p>
-            <p><a href="./search-console-checklist.html">자세히 읽기</a></p>
-          </article>
-          <article class="portal-article-card">
-            <span class="portal-result-category">검색 습관</span>
-            <h3>검색 전에 키워드를 정리하는 가장 쉬운 방법</h3>
-            <p>막연한 질문을 검색 가능한 표현으로 바꾸면 결과 품질이 훨씬 좋아집니다.</p>
-            <p><a href="./search-keyword-planning-guide.html">자세히 읽기</a></p>
-          </article>
-          <article class="portal-article-card">
-            <span class="portal-result-category">포털 운영</span>
-            <h3>정보형 포털에 실제로 필요한 콘텐츠는 무엇인가</h3>
-            <p>허브형 화면과 독립 글 페이지를 어떤 균형으로 쌓아야 하는지 설명합니다.</p>
-            <p><a href="./useful-portal-content-guide.html">자세히 읽기</a></p>
-          </article>
-          <article class="portal-article-card">
-            <span class="portal-result-category">일상 정보</span>
-            <h3>하루 시작 전에 확인하면 좋은 정보 체크리스트</h3>
-            <p>날짜, 시간, 메일, 일정, 환율처럼 반복 확인하면 좋은 항목을 묶었습니다.</p>
-            <p><a href="./daily-info-checklist.html">자세히 읽기</a></p>
-          </article>
-          <article class="portal-article-card">
-            <span class="portal-result-category">작성 기준</span>
-            <h3>짧아도 도움이 되는 설명 페이지를 쓰는 법</h3>
-            <p>작은 페이지라도 실제 가치를 만들려면 어떤 구조로 써야 하는지 정리합니다.</p>
-            <p><a href="./writing-clear-helpful-pages.html">자세히 읽기</a></p>
-          </article>
-          <article class="portal-article-card">
-            <span class="portal-result-category">운영 기준</span>
-            <h3>정보형 사이트 운영 기준 체크리스트</h3>
-            <p>정책 문서, 내부 링크, 비어 있는 기능 정리 기준을 빠르게 확인할 수 있습니다.</p>
-            <p><a href="./site-standards-checklist.html">자세히 읽기</a></p>
-          </article>
-        </div>
-      </section>
-
-      <section class="portal-panel" aria-label="외부 읽을거리">
-        <div class="portal-panel-head">
-          <div>
-            <h2>외부 읽을거리</h2>
-            <span>Referenced News</span>
-          </div>
-          <p class="portal-section-note">실제 언론사 기사로 이동하는 링크 모음입니다. 본문은 가져오지 않고, 출처와 날짜를 함께 표시합니다.</p>
-        </div>
-        <div class="portal-article-grid">
-          <article class="portal-article-card">
-            <span class="portal-result-category">정책 · 에너지</span>
-            <h3>5~7월 원유 수급 대응 전망</h3>
-            <p>산업부가 2026년 5월부터 7월까지 도입 예정 원유 물량과 대응 여력을 설명한 기사입니다.</p>
-            <p><a href="https://biz.chosun.com/policy/policy_sub/2026/05/07/MYIHDPPX7ZGNJOE6APYOXPZEKQ/" target="_blank" rel="noopener noreferrer">조선비즈 · 2026년 5월 7일 원문 보기</a></p>
-          </article>
-          <article class="portal-article-card">
-            <span class="portal-result-category">증시</span>
-            <h3>코스피 급등과 투자 심리</h3>
-            <p>코스피가 2026년 5월 4일 큰 폭으로 오른 배경과 시장 분위기를 다룬 기사입니다.</p>
-            <p><a href="https://biz.chosun.com/stock/stock_general/2026/05/04/MNSWCMRVGNSDKZLFMU4DQMJSGU/?outputType=amp" target="_blank" rel="noopener noreferrer">조선비즈 · 2026년 5월 4일 원문 보기</a></p>
-          </article>
-          <article class="portal-article-card">
-            <span class="portal-result-category">해운 · 국제</span>
-            <h3>홍해 항로를 통과한 한국 유조선</h3>
-            <p>홍해를 통과한 한국 선박 상황과 국내 원유 운송 흐름을 전한 기사입니다.</p>
-            <p><a href="https://www.yna.co.kr/view/AKR20260506148100704" target="_blank" rel="noopener noreferrer">연합뉴스 · 2026년 5월 6일 원문 보기</a></p>
-          </article>
-          <article class="portal-article-card">
-            <span class="portal-result-category">국제 정세</span>
-            <h3>호르무즈 봉쇄와 외교 일정 변수</h3>
-            <p>호르무즈 해협 봉쇄가 국제 원유 시장과 외교 일정에 미칠 영향을 다룬 기사입니다.</p>
-            <p><a href="https://www.chosun.com/international/international_general/2026/04/14/GDAJ75Q5OVFKJHDQOX5QGFEDZA/" target="_blank" rel="noopener noreferrer">조선닷컴 · 2026년 4월 14일 원문 보기</a></p>
-          </article>
-          <article class="portal-article-card">
-            <span class="portal-result-category">증시 전망</span>
-            <h3>5월 증시 변동성을 보는 시각</h3>
-            <p>5월 장세를 매도보다 매수 기회로 해석한 증권가 시각을 정리한 기사입니다.</p>
-            <p><a href="https://biz.chosun.com/stock/stock_general/2026/05/04/GQ2GKYRRGY2WKNZZMI3TIZTDGI/" target="_blank" rel="noopener noreferrer">조선비즈 · 2026년 5월 4일 원문 보기</a></p>
-          </article>
-          <article class="portal-article-card">
-            <span class="portal-result-category">헤드라인</span>
-            <h3>이 시각 주요 뉴스 묶음</h3>
-            <p>국내외 주요 이슈를 시간대별 헤드라인 묶음으로 빠르게 확인할 수 있는 페이지입니다.</p>
-            <p><a href="https://www.yna.co.kr/view/AKR20260505038200011" target="_blank" rel="noopener noreferrer">연합뉴스 · 2026년 5월 5일 원문 보기</a></p>
-          </article>
-        </div>
-      </section>
-
-      <section class="portal-panel" aria-label="추천 읽을거리">
-        <div class="portal-panel-head">
-          <div>
-            <h2>추천 읽을거리</h2>
-            <span>Recommended Reads</span>
-          </div>
-          <p class="portal-section-note">메인 화면 기능 설명보다 실제 글 페이지를 먼저 읽을 수 있도록 자주 찾는 주제를 다시 묶었습니다.</p>
-        </div>
-        <div class="portal-article-grid">
-          <article class="portal-article-card">
-            <span class="portal-result-category">환율</span>
-            <h3>환율 위젯을 빠르게 읽는 가장 쉬운 방법</h3>
-            <p>USD, EUR, 100엔 흐름을 한 화면에서 볼 때 무엇부터 해석해야 하는지 정리한 글입니다.</p>
-            <p><a href="./exchange-rate-widget-guide.html">자세히 읽기</a></p>
-          </article>
-          <article class="portal-article-card">
-            <span class="portal-result-category">일정</span>
-            <h3>메일, 일정, 메모를 한 흐름으로 묶는 법</h3>
-            <p>검색 이후 행동이 끊기지 않도록 정리하는 기준을 실제 사용 흐름 중심으로 설명합니다.</p>
-            <p><a href="./mail-calendar-memo-workflow.html">자세히 읽기</a></p>
-          </article>
-          <article class="portal-article-card">
-            <span class="portal-result-category">스타일</span>
-            <h3>퍼스널 스타일 상담을 잘 받기 위한 입력 가이드</h3>
-            <p>키, 몸무게, 사진, 취향 메모를 어떤 기준으로 적어야 결과가 더 읽기 쉬워지는지 정리합니다.</p>
-            <p><a href="./personal-stylist-input-guide.html">자세히 읽기</a></p>
-          </article>
-          <article class="portal-article-card">
-            <span class="portal-result-category">사운드</span>
-            <h3>브라우저에서 바로 쓰는 DJ 런치패드</h3>
-            <p>별도 설치 없이 패드를 누르거나 맥북 키보드를 눌러 바로 소리가 나오는 실습 화면입니다.</p>
-            <p><a href="./launchpad.html">런치패드 열기</a></p>
-          </article>
-        </div>
-      </section>
-
-      <section class="portal-panel" id="portal-search-guide" aria-label="검색 활용 안내">
-        <div class="portal-panel-head">
-          <div>
-            <h2>검색 활용 안내</h2>
-            <span>Search Guide</span>
-          </div>
-        </div>
-        <div class="portal-faq-list">
-          <article class="portal-faq-item">
-            <h3>이 화면은 무엇을 위한 페이지인가요?</h3>
-            <p>하나의 검색창만 두기보다, 사용자가 검색 전후에 자주 확인하는 정보 흐름을 함께 정리해주는 시작 페이지 역할을 합니다.</p>
-          </article>
-          <article class="portal-faq-item">
-            <h3>검색은 어디로 연결되나요?</h3>
-            <p>입력한 키워드는 네이버 또는 구글 검색으로 바로 이동할 수 있고, 화면 안에서는 관련 주제와 짧은 설명을 먼저 확인할 수 있습니다.</p>
-          </article>
-          <article class="portal-faq-item">
-            <h3>스타일 상담 기능은 어떤 방식으로 쓰나요?</h3>
-            <p>키, 몸무게, 사진과 취향 메모를 입력하면 체형과 무드 기준의 간단한 스타일 보고서를 받아볼 수 있습니다. 현재 공개 사이트에서는 브라우저 안에서 바로 읽을 수 있는 요약 노트 형식으로 정리되며, 사용 예시는 <a href="./stylist-sample-casual-office.html">출근룩 샘플</a>, <a href="./stylist-sample-soft-date.html">데이트룩 샘플</a>, <a href="./stylist-sample-travel-casual.html">여행 캐주얼 샘플</a>에서 확인할 수 있습니다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="portal-panel" id="portal-results" aria-live="polite">
-        <div class="portal-panel-head">
-          <h2>주제별 읽을거리</h2>
-          <span id="portal-result-meta">기본 안내 목록</span>
-        </div>
-        <div class="portal-results" id="portal-results-list"></div>
-      </section>
-
-      <section class="portal-panel portal-stylist-panel" id="portal-stylist" aria-label="퍼스널 스타일리스트 서비스">
-        <div class="portal-panel-head">
-          <div>
-            <h2>퍼스널 스타일리스트</h2>
-            <span>Style Atelier</span>
-          </div>
-          <p class="portal-section-note">내 체형과 분위기를 가볍게 남기면 어울리는 코디 방향을 정리해주는 스타일 상담 공간입니다.</p>
-        </div>
-
-        <div class="portal-stylist-tabs" role="tablist" aria-label="스타일리스트 단계">
-          <button type="button" class="portal-stylist-tab is-active" role="tab" aria-selected="true">내 정보</button>
-          <button type="button" class="portal-stylist-tab" role="tab" aria-selected="false">무드 선택</button>
-          <button type="button" class="portal-stylist-tab" role="tab" aria-selected="false">코디 준비</button>
-        </div>
-
-        <div class="portal-stylist-layout">
-          <form class="portal-stylist-form" id="portal-stylist-form">
-            <div class="portal-form-grid two-col">
-              <label>
-                <span>키</span>
-                <div class="portal-unit-input">
-                  <input type="number" name="height" min="120" max="230" placeholder="예: 175" inputmode="decimal" required />
-                  <strong>cm</strong>
-                </div>
-              </label>
-              <label>
-                <span>몸무게</span>
-                <div class="portal-unit-input">
-                  <input type="number" name="weight" min="30" max="200" placeholder="예: 70" inputmode="decimal" required />
-                  <strong>kg</strong>
-                </div>
-              </label>
-            </div>
-
-            <label>
-              <span>전신 또는 상반신 사진</span>
-              <input type="file" name="photo" id="portal-stylist-photo" accept="image/*" />
-            </label>
-
-            <div class="portal-form-grid two-col">
-              <label>
-                <span>끌리는 무드</span>
-                <select name="style">
-                  <option value="casual">편한 캐주얼</option>
-                  <option value="minimal">깔끔한 미니멀</option>
-                  <option value="street">느긋한 스트릿</option>
-                  <option value="business">단정한 출근룩</option>
-                  <option value="date">따뜻한 데이트룩</option>
-                </select>
-              </label>
-              <label>
-                <span>언제 입을 옷인가요?</span>
-                <select name="purpose">
-                  <option value="daily">데일리</option>
-                  <option value="work">출근</option>
-                  <option value="event">모임</option>
-                  <option value="travel">여행</option>
-                  <option value="shopping">쇼핑 참고</option>
-                </select>
-              </label>
-            </div>
-
-            <label>
-              <span>취향 메모</span>
-              <textarea name="memo" rows="4" placeholder="좋아하는 색, 피하고 싶은 핏, 자주 입는 옷을 편하게 적어주세요."></textarea>
-            </label>
-
-            <button type="submit">내 스타일 노트 저장</button>
-            <p class="portal-stylist-status" id="portal-stylist-status" aria-live="polite"></p>
-          </form>
-
-          <div class="portal-stylist-preview" aria-label="스타일 프로필 미리보기">
-            <div class="portal-photo-preview" id="portal-photo-preview">
-              <span>사진 미리보기</span>
-            </div>
-            <div class="portal-stylist-summary" id="portal-stylist-summary">
-              <strong>아직 비어 있는 스타일 노트</strong>
-              <p>키와 몸무게를 입력하면 어울리는 핏과 무드가 여기서 먼저 정리됩니다.</p>
-            </div>
-            <article class="portal-style-report" id="portal-style-report" hidden>
-              <strong>스타일 컨설팅 보고서</strong>
-              <div id="portal-style-report-body"></div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="portal-grid portal-tools-grid" id="portal-tools" aria-label="도구 위젯">
-        <article class="portal-panel portal-panel-primary-tool">
-          <div class="portal-panel-head">
-            <div>
-              <h2>월별 캘린더</h2>
-              <span>Monthly Calendar</span>
-            </div>
-            <p class="portal-section-note">현재 월 기준 일정 감각을 빠르게 확인할 수 있는 캘린더 위젯입니다.</p>
-          </div>
-          <div class="portal-calendar-widget">
-            <div class="portal-calendar-header">
-              <div>
-                <strong id="portal-calendar-title">2026년 4월</strong>
-                <span id="portal-calendar-summary">이번 달 일정 감각 확인</span>
-              </div>
-              <div class="portal-calendar-controls">
-                <button type="button" class="portal-calendar-nav" id="portal-calendar-prev" aria-label="이전 달 보기">이전</button>
-                <button type="button" class="portal-calendar-nav" id="portal-calendar-next" aria-label="다음 달 보기">다음</button>
-              </div>
-            </div>
-            <div class="portal-calendar-grid portal-calendar-weekdays" aria-hidden="true">
-              <span>일</span>
-              <span>월</span>
-              <span>화</span>
-              <span>수</span>
-              <span>목</span>
-              <span>금</span>
-              <span>토</span>
-            </div>
-            <div class="portal-calendar-grid" id="portal-calendar-days"></div>
-            <div class="portal-calendar-detail" id="portal-calendar-detail">
-              <strong id="portal-calendar-detail-title">날짜를 선택해보세요</strong>
-              <p id="portal-calendar-detail-copy">클릭한 날짜의 요일과 간단한 일정 메모를 여기서 확인할 수 있습니다.</p>
-            </div>
-          </div>
-        </article>
-
-        <article class="portal-panel portal-panel-secondary-tool">
-          <div class="portal-panel-head">
-            <div>
-              <h2>환율 그래프</h2>
-              <span>FX Snapshot</span>
-            </div>
-            <p class="portal-section-note">Frankfurter 공개 환율 API 기준 최근 7일 주요 통화 추이를 확인합니다.</p>
-          </div>
-          <div class="portal-fx-widget">
-            <div class="portal-fx-legend">
-              <div class="portal-fx-legend-item">
-                <span class="portal-fx-swatch usd"></span>
-                <strong>USD/KRW</strong>
-              </div>
-              <div class="portal-fx-legend-item">
-                <span class="portal-fx-swatch jpy"></span>
-                <strong>JPY/KRW (100엔)</strong>
-              </div>
-              <div class="portal-fx-legend-item">
-                <span class="portal-fx-swatch eur"></span>
-                <strong>EUR/KRW</strong>
-              </div>
-            </div>
-            <div class="portal-fx-board">
-              <div class="portal-fx-yaxis" id="portal-fx-yaxis" aria-hidden="true"></div>
-              <div class="portal-fx-chart-wrap">
-                <div class="portal-fx-chart" id="portal-fx-chart" aria-label="환율 그래프"></div>
-                <div class="portal-fx-axis" id="portal-fx-axis"></div>
-              </div>
-            </div>
-            <p class="portal-fx-note" id="portal-fx-note">실제 환율 데이터를 불러오는 중입니다. 비교 차트는 첫날 대비 변동률 기준입니다.</p>
-            <div class="portal-fx-tooltip" id="portal-fx-tooltip" hidden></div>
-            <div class="portal-fx-summary" id="portal-fx-summary"></div>
-          </div>
-        </article>
-      </section>
-
-      <section class="portal-grid" aria-label="자주 묻는 질문">
-        <article class="portal-panel">
-          <div class="portal-panel-head">
-            <h2>자주 묻는 질문</h2>
-            <span>FAQ</span>
-          </div>
-          <div class="portal-faq-list">
-            <article class="portal-faq-item">
-              <h3>이 사이트는 무엇을 제공하나요?</h3>
-              <p>검색 시작 화면, 생산성 위젯 구조, 정보 탐색 흐름, 운영 기준과 정책 문서를 함께 제공하는 정보형 포털입니다.</p>
-            </article>
-            <article class="portal-faq-item">
-              <h3>검색 결과는 외부 검색엔진을 직접 보여주나요?</h3>
-              <p>아니요. 이 사이트는 검색 결과를 복제하지 않고, 검색으로 이어지기 전후에 도움이 되는 설명과 정리형 콘텐츠를 함께 제공합니다.</p>
-            </article>
-            <article class="portal-faq-item">
-              <h3>광고는 어떤 기준으로 운영하나요?</h3>
-              <p>광고는 콘텐츠를 대체하지 않으며, 사용자가 읽어야 할 정보보다 먼저 보이도록 설계하지 않는 것을 원칙으로 합니다.</p>
-            </article>
-            <article class="portal-faq-item">
-              <h3>자세한 글은 어디서 읽을 수 있나요?</h3>
-              <p>메인 가이드 카드나 <a href="./guides.html">가이드 모음 페이지</a>에서 검색 설계, 스타일 상담, 환율 읽기 같은 상세 글을 확인할 수 있습니다.</p>
-            </article>
-          </div>
-        </article>
-
-        <article class="portal-panel portal-trust-panel">
-          <div class="portal-panel-head">
-            <h2>서비스 안내 센터</h2>
-            <span>Trust Center</span>
-          </div>
-          <div class="portal-trust-links">
-            <a class="portal-trust-link" href="./about.html">
-              <strong>소개</strong>
-              <span>사이트 목적, 운영 범위, 제공 가치 안내</span>
-            </a>
-            <a class="portal-trust-link" href="./content-policy.html">
-              <strong>콘텐츠 정책</strong>
-              <span>작성 기준, 업데이트 원칙, 품질 관리 방식 안내</span>
-            </a>
-            <a class="portal-trust-link" href="./privacy.html">
-              <strong>개인정보 처리방침</strong>
-              <span>폼 제출, 댓글, 광고 스크립트 관련 데이터 안내</span>
-            </a>
-            <a class="portal-trust-link" href="./terms.html">
-              <strong>이용안내</strong>
-              <span>서비스 이용 시 참고할 기본 조건과 면책 고지</span>
-            </a>
-          </div>
-        </article>
-      </section>
-
-      <section class="portal-grid" id="portal-standards" aria-label="운영 기준">
-        <article class="portal-panel">
-          <div class="portal-panel-head">
-            <h2>운영 원칙</h2>
-            <span>Site Standards</span>
-          </div>
-          <ul class="portal-summary">
-            <li>
-              <strong>독창적인 한국어 콘텐츠 유지</strong>
-              <span>다른 사이트 문구를 복제하지 않고, 실제 사용 흐름에 맞춘 자체 설명과 안내를 작성합니다.</span>
-            </li>
-            <li>
-              <strong>명확한 탐색 구조 유지</strong>
-              <span>서비스, 가이드, 검색결과, 운영원칙, 정책 페이지를 분리해 사용자가 원하는 정보를 쉽게 찾도록 설계합니다.</span>
-            </li>
-            <li>
-              <strong>광고보다 정보 우선</strong>
-              <span>콘텐츠가 부족한 페이지를 수익화 수단으로 사용하지 않고, 정보 이해를 방해하는 과도한 광고 배치를 지양합니다.</span>
-            </li>
-          </ul>
-        </article>
-
-        <article class="portal-panel">
-          <div class="portal-panel-head">
-            <h2>운영자 정보</h2>
-            <span>About Publisher</span>
-          </div>
-          <div class="portal-profile-list">
-            <div class="portal-profile-item">
-              <strong>사이트명</strong>
-              <p>CYH Search</p>
-            </div>
-            <div class="portal-profile-item">
-              <strong>운영 목적</strong>
-              <p>검색, 생산성, 탐색 흐름을 한 화면에서 정리하는 정보형 포털 구축</p>
-            </div>
-            <div class="portal-profile-item">
-              <strong>문의 채널</strong>
-              <p>상단의 제휴 문의 폼을 통해 운영 문의와 제안을 받고 있습니다.</p>
-            </div>
-            <div class="portal-profile-item">
-              <strong>정책 문서</strong>
-              <p><a href="./about.html">소개</a>, <a href="./content-policy.html">콘텐츠 정책</a>, <a href="./privacy.html">개인정보 처리방침</a>, <a href="./terms.html">이용안내</a></p>
-            </div>
-          </div>
-        </article>
-      </section>
-    </main>
-
-    <footer class="portal-footer">
-      <div>
-        <strong>CYH Search</strong>
-        <p>검색과 생산성 흐름을 정리하는 정보형 포털</p>
       </div>
-      <nav class="portal-footer-nav" aria-label="푸터 링크">
-        <a href="./about.html">소개</a>
-        <a href="./content-policy.html">콘텐츠 정책</a>
-        <a href="./privacy.html">개인정보 처리방침</a>
-        <a href="./terms.html">이용안내</a>
-        <a href="./ads.txt">ads.txt</a>
-      </nav>
-    </footer>
-  </div>
+    </section>
 
-  <script defer src="./main.js"></script>
+    <section class="section-band muted" id="interview" aria-labelledby="interview-title">
+      <div class="section-head">
+        <p class="eyebrow">Interview</p>
+        <h2 id="interview-title">면접에서 자주 확인하는 기준</h2>
+        <p>답을 외우기보다 자신의 프로젝트 경험과 연결해 설명할 수 있어야 합니다.</p>
+      </div>
+
+      <div class="interview-list">
+        <details open>
+          <summary>기술 선택을 어떻게 설명할 것인가?</summary>
+          <p>사용한 기술의 장점뿐 아니라 포기한 선택지, 비용, 팀 상황, 운영 난이도까지 같이 말해야 설득력이 생깁니다.</p>
+        </details>
+        <details>
+          <summary>버그를 어떻게 추적했는가?</summary>
+          <p>재현 조건, 관찰한 로그, 세운 가설, 틀린 가설, 최종 원인, 재발 방지책 순서로 정리하면 좋습니다.</p>
+        </details>
+        <details>
+          <summary>성능 개선 경험을 어떻게 말할 것인가?</summary>
+          <p>측정 지표, 병목 위치, 적용한 변경, 개선 수치, 부작용 여부를 함께 제시해야 합니다.</p>
+        </details>
+        <details>
+          <summary>협업 충돌은 어떻게 풀었는가?</summary>
+          <p>감정이 아니라 기준을 세우고, 요구사항과 제약을 분리하고, 기록으로 합의한 경험을 설명합니다.</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Developer Field Guide</p>
+    <a href="#top">맨 위로</a>
+  </footer>
+
+  <script src="./main.js"></script>
 </body>
 </html>
